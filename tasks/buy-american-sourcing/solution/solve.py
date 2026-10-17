@@ -262,8 +262,7 @@ def main():
             unit = import_cost(r)
             line = dict(product_id=pid, admissibility=status[pid], build="import", offers=None, import_offer=choice,
                         unit_outlay_cents=unit, cost_of_components_cents=None, domestic_component_cost_cents=None,
-                        iron_steel_cost_cents=None, foreign_iron_steel_cost_cents=None, track="foreign",
-                        foreign_basis="unreasonable_cost")
+                        iron_steel_cost_cents=None, foreign_iron_steel_cost_cents=None, track="foreign")
         else:
             T = Dm = IS = FIS = 0
             unit = int(products[pid]["assembly_cost_cents"])
@@ -284,13 +283,9 @@ def main():
                 track = "domestic_cots"
             else:
                 track = "domestic_component_test" if Fraction(Dm) > Fraction(T) * Fraction(THRESHOLD, 100) else "foreign"
-            basis = None
-            if track == "foreign":
-                basis = "fallback_25_106_b2" if status[pid] == "fallback_required" else "unreasonable_cost"
             line = dict(product_id=pid, admissibility=status[pid], build="us", offers=choice, import_offer=None,
                         unit_outlay_cents=unit, cost_of_components_cents=T, domestic_component_cost_cents=Dm,
-                        iron_steel_cost_cents=IS, foreign_iron_steel_cost_cents=FIS, track=track,
-                        foreign_basis=basis)
+                        iron_steel_cost_cents=IS, foreign_iron_steel_cost_cents=FIS, track=track)
         total += q * unit
         lines.append(line)
     newq = sorted(s for s in new if solver.Value(y[s]) and s in used)

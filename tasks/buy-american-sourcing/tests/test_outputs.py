@@ -11,7 +11,7 @@ EXPECTED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "expected.js
 
 LINE_KEYS = {"product_id", "admissibility", "build", "offers", "import_offer", "unit_outlay_cents",
              "cost_of_components_cents", "domestic_component_cost_cents", "iron_steel_cost_cents",
-             "foreign_iron_steel_cost_cents", "track", "foreign_basis"}
+             "foreign_iron_steel_cost_cents", "track"}
 
 
 @pytest.fixture(scope="module")
@@ -58,7 +58,6 @@ def test_plan_schema(plan):
         assert set(l) == LINE_KEYS, l.get("product_id")
         assert l["admissibility"] in STATUSES and l["track"] in TRACKS
         assert l["build"] in ("us", "import")
-        assert l["foreign_basis"] in (None, "unreasonable_cost", "fallback_25_106_b2")
 
 
 def test_every_product_has_one_valid_build(inst, lines):
@@ -107,19 +106,14 @@ def test_every_line_is_deliverable(inst, builds):
     assert not bad, bad
 
 
-def test_track_and_basis_are_consistent(inst, builds, lines):
-    """The reported track is the one the build's own figures satisfy, and foreign lines carry the right basis."""
+def test_track_is_consistent(builds, lines):
+    """The reported track is the one the build's own figures satisfy."""
     bad = []
     for pid, l in lines.items():
         b = builds[pid]
         assert b is not None, pid
         if l["track"] != b["track"]:
-            bad.append((pid, "track", l["track"], b["track"]))
-        want = None
-        if b["track"] == "foreign":
-            want = "fallback_25_106_b2" if inst.status(pid) == "fallback_required" else "unreasonable_cost"
-        if l["foreign_basis"] != want:
-            bad.append((pid, "basis", l["foreign_basis"], want))
+            bad.append((pid, l["track"], b["track"]))
     assert not bad, bad
 
 

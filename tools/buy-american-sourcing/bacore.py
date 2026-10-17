@@ -320,9 +320,6 @@ def to_output(inst, sol):
     for pid in sorted(sol["plan"]):
         b = sol["plan"][pid]
         st = sol["status"][pid]
-        basis = None
-        if b["track"] == "foreign":
-            basis = "fallback_25_106_b2" if st == "fallback_required" else "unreasonable_cost"
         line = dict(product_id=pid, admissibility=st, build=b["build"],
                     offers=b.get("offers"), import_offer=b.get("import_offer"),
                     unit_outlay_cents=b["unit_outlay"],
@@ -330,7 +327,7 @@ def to_output(inst, sol):
                     domestic_component_cost_cents=b["domestic_component_cost"],
                     iron_steel_cost_cents=b["iron_steel_cost"],
                     foreign_iron_steel_cost_cents=b["foreign_iron_steel_cost"],
-                    track=b["track"], foreign_basis=basis)
+                    track=b["track"])
         lines.append(line)
     return dict(total_outlay_cents=sol["total_outlay"],
                 qualification_spend_cents=sol["qualification_spend"],
