@@ -89,7 +89,7 @@ SHORTCUTS = {
 # not a calibrated shortcut: the generator rejects any product where the FAR 25.106(b)(2) fallback would matter
 GUARD_FLAGS = {"far_fallback"}
 
-TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "qualifying_country", "foreign")
+TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "foreign")
 
 
 def _rows(path):
@@ -376,7 +376,7 @@ class Rules:
         return dict(build="import", considered=not (self.setaside and qcep),
                     fallback_ok=False, dc_le55=100 * UQ <= 55 * T, import_offer=r["offer_id"], unit_outlay=c, unit_eval=c,
                     cost_of_components=None, domestic_component_cost=None, iron_steel_cost=None,
-                    foreign_iron_steel_cost=None, track="qualifying_country" if qcep else "foreign",
+                    foreign_iron_steel_cost=None, track="foreign",
                     domestic=False, exempt=exempt, restricted=rest, sm_total=smt if rest else None,
                     sm_bad=smb if rest else None, sm_ok=(not rest) or self.sm_ok(smt, smb, False),
                     suppliers={r["supplier_id"]})

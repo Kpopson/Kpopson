@@ -40,7 +40,7 @@ STEEL_LIMITS = {"mn": Fraction("1.65"), "si": Fraction("0.60"), "cu": Fraction("
 STEEL_ELEMENTS = ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v")
 NOT_COTS_EXCEPTED = frozenset({"mill_product", "forging", "casting", "magnet", "fastener"})
 
-TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "qualifying_country", "foreign")
+TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "foreign")
 STATUSES = ("domestic_required", "foreign_allowed")
 
 
@@ -234,7 +234,7 @@ class Instance:
         return dict(build="import", import_offer=iid, considered=considered, unit_outlay=c, unit_eval=c,
                     cost_of_components=None,
                     domestic_component_cost=None, iron_steel_cost=None, foreign_iron_steel_cost=None,
-                    track="qualifying_country" if qcep else "foreign", domestic=False, exempt=exempt,
+                    track="foreign", domestic=False, exempt=exempt,
                     restricted=rest, specialty_metal_g=SG if rest else None,
                     noncompliant_specialty_metal_g=SB if rest else None,
                     acceptable=(not rest) or 100 * SB <= 2 * SG, suppliers={r["supplier_id"]})

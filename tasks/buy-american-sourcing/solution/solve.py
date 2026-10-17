@@ -344,7 +344,7 @@ def main():
             line = dict(product_id=pid, admissibility=status[pid], build="import", offers=None, import_offer=choice,
                         unit_outlay_cents=unit, cost_of_components_cents=None, domestic_component_cost_cents=None,
                         iron_steel_cost_cents=None, foreign_iron_steel_cost_cents=None,
-                        track="qualifying_country" if t["qcep"] else "foreign",
+                        track="foreign",
                         specialty_metals_restricted=pm.covered, specialty_metal_g=t["smt"] if pm.covered else None,
                         noncompliant_specialty_metal_g=t["smb"] if pm.covered else None)
         else:
