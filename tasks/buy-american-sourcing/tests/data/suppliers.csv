@@ -1,0 +1,28 @@
+supplier_id,name,country,qualified,qualification_fee_cents
+INHOUSE,"Own plant fabrication and machine shop (Dayton, OH)",US,Y,0
+SUP-01,"Great Lakes Steel Service Center (Cleveland, OH)",US,Y,0
+SUP-02,"Ohio Valley Tube and Roll Forming (Wheeling, WV)",US,Y,0
+SUP-03,Hanbit Steel Trading Co. (Busan),KR,Y,0
+SUP-04,"Gulf Coast Metals Processing (Houston, TX)",US,Y,0
+SUP-05,"Northland Galvanizing and Coil (Hamilton, ON)",CA,Y,0
+SUP-06,Monterrey Metal Fabricators S.A. de C.V.,MX,N,1030000
+SUP-07,"Midwest Fastener Supply (Rockford, IL)",US,Y,0
+SUP-08,Formosa Precision Fasteners Ltd. (Kaohsiung),TW,Y,0
+SUP-09,"Carolina Plastics Molding (Greenville, SC)",US,N,1170000
+SUP-10,Shenzhen Brightway Industrial Co.,CN,Y,0
+SUP-11,Saigon Rubber and Plastics JSC,VN,Y,0
+SUP-12,Bajio Componentes Industriales,MX,Y,0
+SUP-13,"Keystone Electronics Assembly (Allentown, PA)",US,Y,0
+SUP-14,Hsinchu Circuit Works Co.,TW,Y,0
+SUP-15,"Pacific Components Brokerage (Irvine, CA)",UNKNOWN,Y,0
+SUP-16,Kanto Quartz Devices K.K.,JP,Y,0
+SUP-17,Ceylon Natural Rubber Exports (Pvt) Ltd.,LK,Y,0
+SUP-18,Guangdong Bristle and Brush Materials Co.,CN,Y,0
+SUP-19,Rheinland Laborglas GmbH,DE,Y,0
+SUP-20,"Appalachian Hardwood Products (Beckley, WV)",US,Y,0
+SUP-21,"Delta Elastomers Inc. (Akron, OH)",US,N,880000
+SUP-26,"Finger Lakes Scientific Glass (Elmira, NY)",US,Y,0
+SUP-22,Dongguan Everlight Trading Co.,CN,Y,0
+SUP-23,Penang Industrial Exports Sdn. Bhd.,MY,N,380000
+SUP-24,Tianjin Hardware Export Corp.,CN,Y,0
+SUP-25,Hai Phong Manufacturing Co.,VN,N,460000

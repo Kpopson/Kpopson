@@ -242,7 +242,7 @@ def allowed(status, b):
     return False
 
 
-def optimize(inst, flags=(), budget_override=None, time_limit=120):
+def optimize(inst, flags=(), budget_override=None, time_limit=120, fees_only=False):
     R = Rules(inst, flags)
     sups = inst["suppliers"]
     unq = sorted(s for s, r in sups.items() if r["qualified"] != "Y")
@@ -274,7 +274,7 @@ def optimize(inst, flags=(), budget_override=None, time_limit=120):
     n = nz + ny
     cvec = np.zeros(n)
     for j, (_, _, c, _) in enumerate(cols):
-        cvec[j] = c
+        cvec[j] = 0 if fees_only else c
     for s, i in uidx.items():
         cvec[nz + i] = int(sups[s]["qualification_fee_cents"])
     A, lb, ub = [], [], []
@@ -322,7 +322,7 @@ def to_output(inst, sol):
         st = sol["status"][pid]
         basis = None
         if b["track"] == "foreign":
-            basis = "fallback_55" if st == "fallback_required" else "unreasonable_cost"
+            basis = "fallback_25_106_b2" if st == "fallback_required" else "unreasonable_cost"
         line = dict(product_id=pid, admissibility=st, build=b["build"],
                     offers=b.get("offers"), import_offer=b.get("import_offer"),
                     unit_outlay_cents=b["unit_outlay"],

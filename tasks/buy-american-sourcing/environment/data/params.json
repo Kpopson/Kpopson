@@ -1,0 +1,13 @@
+{
+  "solicitation": "FSS-26-0418, facility maintenance supplies, total small business set-aside",
+  "contracting_agency": "General Services Administration, Federal Acquisition Service",
+  "buy_american_clause": "FAR 52.225-1 Buy American-Supplies (Oct 2022), basic clause (no Alternate I)",
+  "trade_agreements_apply": false,
+  "offeror_size": "small",
+  "delivery_calendar_year": 2029,
+  "evaluation_date": "2026-12-01",
+  "nonavailable_articles_available_domestically": [
+    "Quartz crystals"
+  ],
+  "qualification_budget_cents": 2330000
+}

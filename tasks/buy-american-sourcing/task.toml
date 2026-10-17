@@ -1,0 +1,47 @@
+artifacts = ["/app/output/"]
+
+schema_version = "2.0"
+name = "insight/buy-american-sourcing"
+
+[metadata]
+author_name = "Kpopson"
+category = "Operations"
+subcategory = "Supply Chain"
+difficulty = "hard"
+tags = ["federal-procurement", "buy-american", "far-part-25", "sourcing", "milp"]
+difficulty_explanation = """A small manufacturer bidding a GSA small business set-aside must decide, for 50 end \
+products, which supplier offer to use for every bill-of-materials slot, which new vendors to put through a paid \
+qualification audit within a fixed audit budget, and whether a line can be delivered as a foreign end product. \
+Getting it right means applying FAR 25.101, 25.106, 25.502 and clause 52.225-1 the way a contracts manager does: \
+which costs belong in cost of components, how component origin, steel origin, the nonavailable-article list, the \
+COTS waiver and its iron and steel exception interact, which domestic content threshold applies to the delivery \
+year, how the small business evaluation factor and the 55 percent fallback decide when a foreign build is \
+acceptable, and that every legal limit is a strict one. The domestic share of each product depends on the \
+sourcing choice itself, and the vendor audits couple all products together."""
+solution_explanation = """The reference solution first evaluates each product on its own, as the contracting \
+officer would: it finds the lowest evaluated build, the lowest compliant domestic build and the lowest build over \
+55 percent domestic content (small CP-SAT models, exact integer and Fraction arithmetic), and classifies the line \
+as domestic required, fallback required or foreign allowed. It then solves one CP-SAT model over all products that \
+picks one build per product and the vendor audits, with the domestic content, iron and steel predominance and \
+foreign iron and steel tests written as exact integer constraints, and minimizes total outlay within the audit \
+budget. It is proven optimal."""
+verification_explanation = """The verifier reads only its own copy of the inputs. It enumerates every build of \
+every product, applies the rules in exact integer arithmetic, recomputes the evaluation outcome of each product, \
+and finds the minimum total outlay with a separate HiGHS selection model. Tests check the schema, that every \
+product has one valid build, that each reported figure matches the recomputed one, that each evaluation outcome \
+is right, that no line delivers a foreign end product it may not, that the reported track and basis fit the \
+build, that every vendor used is qualified within the audit budget, that the total is the plan's own total, and \
+that the total equals the minimum. Any optimal plan is accepted."""
+
+[verifier]
+timeout_sec = 900.0
+
+[agent]
+timeout_sec = 28800.0
+
+[environment]
+environment_mode = "separate"
+build_timeout_sec = 1800.0
+cpus = 2
+memory_mb = 4096
+storage_mb = 10240

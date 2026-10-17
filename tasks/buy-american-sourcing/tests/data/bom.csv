@@ -1,0 +1,248 @@
+product_id,slot,part_description,qty_per_unit
+P01,S1,Glass microscope slides,1
+P01,S2,Cover glass,1
+P01,S3,Staining reagent set,1
+P01,S4,Slide storage box,1
+P02,S1,"Upright post, roll-formed steel",4
+P02,S2,"Shelf panel, cold-rolled steel sheet",4
+P02,S3,"Shelf clip and bolt set, per shelf",4
+P02,S4,"Leveling foot, molded plastic",4
+P02,S5,Powder coat finish material,1
+P03,S1,Glass microscope slides,1
+P03,S2,Cover glass,1
+P03,S3,Staining reagent set,1
+P03,S4,Slide storage box,1
+P04,S1,"Cabinet body, cold-rolled steel sheet",1
+P04,S2,"Door panel, cold-rolled steel sheet",2
+P04,S3,"Hinge, latch and bolt hardware kit",1
+P04,S4,Locking handle assembly,1
+P04,S5,Powder coat finish material,1
+P05,S1,Power transformer,1
+P05,S2,Control board,1
+P05,S3,"Cabinet, aluminum sheet",1
+P05,S4,Output cable set,1
+P05,S5,Cooling fan,1
+P06,S1,LED driver,1
+P06,S2,LED board,1
+P06,S3,"Heat sink, extruded aluminum",1
+P06,S4,"Lens, polycarbonate",1
+P06,S5,"Mounting bracket, steel",1
+P07,S1,"Brush block, hardwood",1
+P07,S2,Brush fill,1
+P07,S3,"Handle, ash wood, 60 in",1
+P07,S4,"Handle brace, steel",1
+P08,S1,LED driver,1
+P08,S2,LED board,1
+P08,S3,"Heat sink, extruded aluminum",1
+P08,S4,"Lens, polycarbonate",1
+P08,S5,"Mounting bracket, steel",1
+P09,S1,"Brush block, hardwood",1
+P09,S2,Brush fill,1
+P09,S3,"Handle, ash wood, 60 in",1
+P09,S4,"Handle brace, steel",1
+P10,S1,Rubber compound,1
+P10,S2,Foam cushion core,1
+P10,S3,Beveled edge strip,4
+P10,S4,Bonding adhesive,1
+P11,S1,"Cabinet body, cold-rolled steel sheet",1
+P11,S2,"Door panel, cold-rolled steel sheet",2
+P11,S3,"Hinge, latch and bolt hardware kit",1
+P11,S4,Locking handle assembly,1
+P11,S5,Powder coat finish material,1
+P12,S1,"Upright post, roll-formed steel",4
+P12,S2,"Shelf panel, cold-rolled steel sheet",4
+P12,S3,"Shelf clip and bolt set, per shelf",4
+P12,S4,"Leveling foot, molded plastic",4
+P12,S5,Powder coat finish material,1
+P13,S1,"Body, cold-rolled steel sheet",1
+P13,S2,"Drawer, steel sheet",6
+P13,S3,Drawer slide hardware,1
+P13,S4,"Caster, polyurethane",4
+P13,S5,Drawer liner set,1
+P14,S1,"Upright post, roll-formed steel",4
+P14,S2,"Shelf panel, cold-rolled steel sheet",4
+P14,S3,"Shelf clip and bolt set, per shelf",4
+P14,S4,"Leveling foot, molded plastic",4
+P14,S5,Powder coat finish material,1
+P15,S1,Rubber compound,1
+P15,S2,Foam cushion core,1
+P15,S3,Beveled edge strip,4
+P15,S4,Bonding adhesive,1
+P16,S1,LED driver,1
+P16,S2,LED board,1
+P16,S3,"Heat sink, extruded aluminum",1
+P16,S4,"Lens, polycarbonate",1
+P16,S5,"Mounting bracket, steel",1
+P17,S1,Rubber compound,1
+P17,S2,Foam cushion core,1
+P17,S3,Beveled edge strip,4
+P17,S4,Bonding adhesive,1
+P18,S1,Printed circuit board assembly,1
+P18,S2,"Quartz crystal, 32.768 kHz",1
+P18,S3,"Enclosure, molded polycarbonate",1
+P18,S4,LCD display module,1
+P18,S5,Output relay,2
+P18,S6,Wiring harness,1
+P19,S1,"Case, molded polypropylene",1
+P19,S2,Contents set,1
+P19,S3,"Wall mount bracket, steel",1
+P19,S4,Labels and instructions,1
+P20,S1,"Upright post, roll-formed steel",4
+P20,S2,"Shelf panel, cold-rolled steel sheet",6
+P20,S3,"Shelf clip and bolt set, per shelf",6
+P20,S4,"Leveling foot, molded plastic",4
+P20,S5,Powder coat finish material,1
+P21,S1,LED driver,1
+P21,S2,LED board,1
+P21,S3,"Heat sink, extruded aluminum",1
+P21,S4,"Lens, polycarbonate",1
+P21,S5,"Mounting bracket, steel",1
+P22,S1,"Case, molded polypropylene",1
+P22,S2,Contents set,1
+P22,S3,"Wall mount bracket, steel",1
+P22,S4,Labels and instructions,1
+P23,S1,Printed circuit board assembly,1
+P23,S2,"Quartz crystal, 32.768 kHz",1
+P23,S3,"Enclosure, molded polycarbonate",1
+P23,S4,LCD display module,1
+P23,S5,Output relay,2
+P23,S6,Wiring harness,1
+P24,S1,Power transformer,1
+P24,S2,Control board,1
+P24,S3,"Cabinet, aluminum sheet",1
+P24,S4,Output cable set,1
+P24,S5,Cooling fan,1
+P25,S1,"Body, cold-rolled steel sheet",1
+P25,S2,"Drawer, steel sheet",6
+P25,S3,Drawer slide hardware,1
+P25,S4,"Caster, polyurethane",4
+P25,S5,Drawer liner set,1
+P26,S1,"Frame, welded steel tube",1
+P26,S2,"Pneumatic wheel, 10 in",2
+P26,S3,"Axle, steel bar",1
+P26,S4,Handle grip set,1
+P26,S5,"Nose plate, steel",1
+P26,S6,Hardware kit,1
+P27,S1,Printed circuit board assembly,1
+P27,S2,"Quartz crystal, 32.768 kHz",1
+P27,S3,"Enclosure, molded polycarbonate",1
+P27,S4,LCD display module,1
+P27,S5,Output relay,2
+P27,S6,Wiring harness,1
+P28,S1,Printed circuit board assembly,1
+P28,S2,"Quartz crystal, 32.768 kHz",1
+P28,S3,"Enclosure, molded polycarbonate",1
+P28,S4,LCD display module,1
+P28,S5,Output relay,2
+P28,S6,Wiring harness,1
+P29,S1,LED driver,1
+P29,S2,LED board,1
+P29,S3,"Heat sink, extruded aluminum",1
+P29,S4,"Lens, polycarbonate",1
+P29,S5,"Mounting bracket, steel",1
+P30,S1,Printed circuit board assembly,1
+P30,S2,"Quartz crystal, 32.768 kHz",1
+P30,S3,"Enclosure, molded polycarbonate",1
+P30,S4,LCD display module,1
+P30,S5,Output relay,2
+P30,S6,Wiring harness,1
+P31,S1,"Frame, welded steel tube",1
+P31,S2,"Pneumatic wheel, 10 in",2
+P31,S3,"Axle, steel bar",1
+P31,S4,Handle grip set,1
+P31,S5,"Nose plate, steel",1
+P31,S6,Hardware kit,1
+P32,S1,Power transformer,1
+P32,S2,Control board,1
+P32,S3,"Cabinet, aluminum sheet",1
+P32,S4,Output cable set,1
+P32,S5,Cooling fan,1
+P33,S1,Printed circuit board assembly,1
+P33,S2,"Quartz crystal, 32.768 kHz",1
+P33,S3,"Enclosure, molded polycarbonate",1
+P33,S4,LCD display module,1
+P33,S5,Output relay,2
+P33,S6,Wiring harness,1
+P34,S1,Power transformer,1
+P34,S2,Control board,1
+P34,S3,"Cabinet, aluminum sheet",1
+P34,S4,Output cable set,1
+P34,S5,Cooling fan,1
+P35,S1,"Frame, welded steel tube",1
+P35,S2,"Pneumatic wheel, 10 in",2
+P35,S3,"Axle, steel bar",1
+P35,S4,Handle grip set,1
+P35,S5,"Nose plate, steel",1
+P35,S6,Hardware kit,1
+P36,S1,Power transformer,1
+P36,S2,Control board,1
+P36,S3,"Cabinet, aluminum sheet",1
+P36,S4,Output cable set,1
+P36,S5,Cooling fan,1
+P37,S1,LED driver,1
+P37,S2,LED board,1
+P37,S3,"Heat sink, extruded aluminum",1
+P37,S4,"Lens, polycarbonate",1
+P37,S5,"Mounting bracket, steel",1
+P38,S1,Rubber compound,1
+P38,S2,Foam cushion core,1
+P38,S3,Beveled edge strip,4
+P38,S4,Bonding adhesive,1
+P39,S1,LED driver,1
+P39,S2,LED board,1
+P39,S3,"Heat sink, extruded aluminum",1
+P39,S4,"Lens, polycarbonate",1
+P39,S5,"Mounting bracket, steel",1
+P40,S1,"Body, cold-rolled steel sheet",1
+P40,S2,"Drawer, steel sheet",7
+P40,S3,Drawer slide hardware,1
+P40,S4,"Caster, polyurethane",4
+P40,S5,Drawer liner set,1
+P41,S1,LED driver,1
+P41,S2,LED board,1
+P41,S3,"Heat sink, extruded aluminum",1
+P41,S4,"Lens, polycarbonate",1
+P41,S5,"Mounting bracket, steel",1
+P42,S1,"Cabinet body, cold-rolled steel sheet",1
+P42,S2,"Door panel, cold-rolled steel sheet",2
+P42,S3,"Hinge, latch and bolt hardware kit",1
+P42,S4,Locking handle assembly,1
+P42,S5,Powder coat finish material,1
+P43,S1,"Frame, welded steel tube",1
+P43,S2,"Pneumatic wheel, 10 in",2
+P43,S3,"Axle, steel bar",1
+P43,S4,Handle grip set,1
+P43,S5,"Nose plate, steel",1
+P43,S6,Hardware kit,1
+P44,S1,"Case, molded polypropylene",1
+P44,S2,Contents set,1
+P44,S3,"Wall mount bracket, steel",1
+P44,S4,Labels and instructions,1
+P45,S1,"Brush block, hardwood",1
+P45,S2,Brush fill,1
+P45,S3,"Handle, ash wood, 60 in",1
+P45,S4,"Handle brace, steel",1
+P46,S1,"Frame, welded steel tube",1
+P46,S2,"Pneumatic wheel, 10 in",2
+P46,S3,"Axle, steel bar",1
+P46,S4,Handle grip set,1
+P46,S5,"Nose plate, steel",1
+P46,S6,Hardware kit,1
+P47,S1,"Brush block, hardwood",1
+P47,S2,Brush fill,1
+P47,S3,"Handle, ash wood, 60 in",1
+P47,S4,"Handle brace, steel",1
+P48,S1,"Case, molded polypropylene",1
+P48,S2,Contents set,1
+P48,S3,"Wall mount bracket, steel",1
+P48,S4,Labels and instructions,1
+P49,S1,"Cabinet body, cold-rolled steel sheet",1
+P49,S2,"Door panel, cold-rolled steel sheet",2
+P49,S3,"Hinge, latch and bolt hardware kit",1
+P49,S4,Locking handle assembly,1
+P49,S5,Powder coat finish material,1
+P50,S1,"Upright post, roll-formed steel",4
+P50,S2,"Shelf panel, cold-rolled steel sheet",6
+P50,S3,"Shelf clip and bolt set, per shelf",6
+P50,S4,"Leveling foot, molded plastic",4
+P50,S5,Powder coat finish material,1
