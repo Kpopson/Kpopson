@@ -63,9 +63,7 @@ SHORTCUTS = {
     "qc_not_domestic": "does not count qualifying country components or steel as domestic (FAR reading)",
     "korea_qc": "treats South Korea as a qualifying country",
     "factor30": "uses the FAR 30% small business factor instead of DFARS 50%",
-    "no_rule_d": "ignores 225.502(c)(ii)(D) (exempt offer below lowest domestic)",
-    "austria_exempt": "treats Austrian end products as automatically exempt",
-    "qc_import_no_steel_test": "exempts qualifying country iron/steel end products without the steel test",
+    "qc_considered": "considers qualifying country end products in a small business set-aside (225.872-3(a))",
     # specialty metals
     "sm_ignore": "ignores the specialty metals restriction",
     "sm_everywhere": "applies the specialty metals restriction to every product",
@@ -138,6 +136,7 @@ class Rules:
         self.case_by_case = set() if "austria_exempt" in self.f else set(CASE_BY_CASE)
         self.case_by_case -= {c for c in p.get("public_interest_determinations", [])}
         self._sm_cache = {}
+        self.setaside = bool(p.get("small_business_set_aside")) and "qc_considered" not in self.f
 
     def ok_country(self, c):
         return c == "US" or c in self.qc
@@ -307,7 +306,8 @@ class Rules:
         smt, smb = _int(r["specialty_metal_g"]), _int(r["noncompliant_specialty_metal_g"])
         if country in QC and "sm_no_qc_mfg" not in self.f:
             smb = 0
-        return dict(build="import", fallback_ok=False, dc_le55=100 * UQ <= 55 * T, import_offer=r["offer_id"], unit_outlay=c, unit_eval=c,
+        return dict(build="import", considered=not (self.setaside and qcep),
+                    fallback_ok=False, dc_le55=100 * UQ <= 55 * T, import_offer=r["offer_id"], unit_outlay=c, unit_eval=c,
                     cost_of_components=None, domestic_component_cost=None, iron_steel_cost=None,
                     foreign_iron_steel_cost=None, track="qualifying_country" if qcep else "foreign",
                     domestic=False, exempt=exempt, restricted=rest, sm_total=smt if rest else None,
@@ -323,6 +323,7 @@ class Rules:
 
     def admissibility(self, pid, blds):
         """DFARS 225.502(c)(ii), price the determining factor. Returns (status, info)."""
+        blds = [b for b in blds if b.get("considered", True)]       # 225.872-3(a)
         acc = blds if "sm_no_elim" in self.f else [b for b in blds if b["sm_ok"]]
         if not acc:
             return "domestic_required", dict(low=None, lowest_domestic=None)
@@ -350,7 +351,7 @@ class Rules:
 
 
 def allowed(status, b):
-    if not b["sm_ok"]:
+    if not b["sm_ok"] or not b.get("considered", True):
         return False
     if status == "fallback_required":
         return b["domestic"] or b["fallback_ok"]

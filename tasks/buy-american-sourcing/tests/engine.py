@@ -1,7 +1,7 @@
 """Independent verifier engine for the buy-american-sourcing task (DoD version).
 
 Reads only /tests/data. Applies DFARS 252.225-7001 (Basic, FEB 2024), DFARS 252.225-7009 (JAN 2023)
-with 225.7003-1/-2/-3, DFARS 225.502(c)(ii) and 225.106, DFARS 225.872-1, FAR 25.104 and FAR
+with 225.7003-1/-2/-3, DFARS 225.502(c)(ii) and 225.106, DFARS 225.872-1 and 225.872-3(a), FAR 25.104 and FAR
 25.502(d)(1) in exact integer arithmetic by enumerating every build of every product, then finds the
 minimum total outlay with a selection MILP (HiGHS via scipy). Written independently of the reference
 solution, which uses CP-SAT.
@@ -79,6 +79,7 @@ class Instance:
         self.available = set(self.params.get("nonavailable_articles_available_domestically", []))
         self.determinations = set(self.params.get("public_interest_determinations", []))
         self.budget = int(self.params["qualification_budget_cents"])
+        self.set_aside = bool(self.params.get("small_business_set_aside"))
         self._status = {}
         self._sm = {mid: self._is_specialty(m) for mid, m in self.materials.items()}
 
@@ -192,7 +193,10 @@ class Instance:
         SG, SB = _i(r["specialty_metal_g"]), _i(r["noncompliant_specialty_metal_g"])
         if country in QUALIFYING:
             SB = 0
-        return dict(build="import", import_offer=iid, unit_outlay=c, unit_eval=c, cost_of_components=None,
+        # 225.872-3(a): a qualifying country end product is not considered in a small business set-aside
+        considered = not (self.set_aside and qcep)
+        return dict(build="import", import_offer=iid, considered=considered, unit_outlay=c, unit_eval=c,
+                    cost_of_components=None,
                     domestic_component_cost=None, iron_steel_cost=None, foreign_iron_steel_cost=None,
                     track="qualifying_country" if qcep else "foreign", domestic=False, exempt=exempt,
                     restricted=rest, specialty_metal_g=SG if rest else None,
@@ -210,7 +214,8 @@ class Instance:
     def status(self, pid, builds=None):
         if pid in self._status:
             return self._status[pid]
-        offers = [b for b in (builds if builds is not None else self.all_builds(pid)) if b["acceptable"]]
+        offers = [b for b in (builds if builds is not None else self.all_builds(pid))
+                  if b["acceptable"] and b.get("considered", True)]
         low = min(b["unit_eval"] for b in offers)
         dom = [b["unit_eval"] for b in offers if b["domestic"]]
         lows = [b for b in offers if b["unit_eval"] == low]
@@ -227,7 +232,7 @@ class Instance:
 
     @staticmethod
     def deliverable(status, b):
-        return b["acceptable"] and (b["domestic"] or status == "foreign_allowed")
+        return b["acceptable"] and b.get("considered", True) and (b["domestic"] or status == "foreign_allowed")
 
     # ---------------- optimum ----------------
     def optimum(self):

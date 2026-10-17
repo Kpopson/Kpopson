@@ -69,7 +69,7 @@ SUPPLIERS = [
     ("SUP-46", "Changwon Defense Parts Co.", "KR"),
 ]
 COUNTRY = {s[0]: s[2] for s in SUPPLIERS}
-NEW_VENDORS = {"SUP-06", "SUP-09", "SUP-21", "SUP-23", "SUP-25", "SUP-33", "SUP-36", "SUP-44"}
+NEW_VENDORS = {"SUP-06", "SUP-09", "SUP-21", "SUP-23", "SUP-25", "SUP-28", "SUP-29", "SUP-33", "SUP-36", "SUP-44"}
 GENERIC_FOREIGN = ["SUP-10", "SUP-11", "SUP-12", "SUP-28", "SUP-29"]
 US_GENERIC = ["SUP-09", "SUP-20", "SUP-21"]
 IMPORTERS = ["SUP-22", "SUP-23", "SUP-24", "SUP-25", "SUP-42", "SUP-43", "SUP-44", "SUP-45", "SUP-46"]
@@ -140,7 +140,9 @@ class Gen:
             o.update(metal_ore_origin=ore or melt, metal_melt_country=melt, metal_rolling_country=roll or melt,
                      metal_coating_country=coat or "NONE")
             if mat in STEEL_MATS:
-                o["iron_steel_cost_cents"] = str(price + frt + duty)
+                cc = price + frt + duty
+                # electronic parts only carry small stainless contacts or fittings
+                o["iron_steel_cost_cents"] = str(int(cc * 0.03) if form == "electronic" else cc)
         return o
 
     def inhouse(self, pid, slot, direct, mat="", grams=0, melt="US", roll="US", ore="US", form="machined_part"):
@@ -265,14 +267,14 @@ class Gen:
             slot("S1", "Mount body, machined", 1, self.sm_part(pid, "S1", b, R(4000, 6000), "machined_part", self.pick([
                 ("SUP-01", "MAT-6061", "US", "US", 1.00, "N"), ("SUP-10", "MAT-6061", "CN", "CN", 0.70, "N"),
                 ("SUP-31", "MAT-A572", "KR", "KR", 0.74, "N"), ("SUP-30", "MAT-4140", "US", "US", 1.10, "N"),
-                ("SUP-38", "MAT-TI64", "CN", "CN", 1.05, "N")], 3)))
+                ("SUP-04", "MAT-A572", "KR", "US", 0.72, "N"), ("SUP-38", "MAT-TI64", "CN", "CN", 1.05, "N")], 3)))
             slot("S2", "Pintle pin", 1, self.sm_part(pid, "S2", R(700, 1100), R(450, 700), "machined_part", self.pick([
                 ("SUP-30", "MAT-4340", "US", "US", 1.00, "N"), ("SUP-31", "MAT-4340", "KR", "KR", 0.74, "N"),
                 ("SUP-31", "MAT-1541", "KR", "KR", 0.66, "N"), ("SUP-32", "MAT-1340", "IN", "IN", 0.62, "N")], 3)))
             slot("S3", "Spring", 2, self.sm_part(pid, "S3", R(150, 260), R(60, 110), "machined_part", [
                 ("SUP-07", "MAT-5160", "US", "US", 1.00, "N"), ("SUP-36", "MAT-5160", "JP", "JP", 0.82, "N"),
                 ("SUP-10", "MAT-5160", "CN", "CN", 0.60, "N")]))
-            slot("S4", "Sight bracket and electronics module", 1, self.electronic(pid, "S4", R(2500, 4000), sm_g=R(100, 250)))
+            slot("S4", "Sight bracket and electronics module", 1, self.electronic(pid, "S4", R(6000, 9000), sm_g=R(100, 250)))
             slot("S5", "Bolt set", 1, self.fasteners(pid, "S5", R(250, 500), R(80, 140), "MAT-4140"))
             asm = R(1800, 3200); qty = R(40, 160)
         elif fam == "blower":
@@ -503,7 +505,7 @@ def lowest_domestic(part):
     return min((b for b in t["builds"] if b["domestic"] and b["sm_ok"]), key=lambda b: b["unit_eval"])
 
 
-def plant(g, fam, pid, flag, tweak=None, use=None, tries=6000):
+def plant(g, fam, pid, flag, tweak=None, use=None, tries=20000):
     for _ in range(tries):
         part = g.family(fam, pid, use=use(g) if callable(use) else use)
         if tweak and not tweak(g, part):
@@ -645,22 +647,24 @@ def look(g):
 
 
 DOMREQ = tw_import(1.05, 1.40)
-FORALLOW = tw_import(1.02, 1.10, sup=lambda g: g.rng.choice(["SUP-42", "SUP-43", "SUP-45"]),
-                     qc_share=lambda g: g.u(0.8, 0.95), steel_share=0.1, bad_share=0.0)
+FORALLOW = tw_import(1.55, 2.20, sup=lambda g: g.rng.choice(["SUP-22", "SUP-23", "SUP-24", "SUP-25"]), bad_share=0.0)
+EITHER = lambda g, part: (DOMREQ if g.rng.random() < 0.5 else FORALLOW)(g, part)
+QCIMP = tw_import(1.05, 1.30, sup=lambda g: g.rng.choice(["SUP-42", "SUP-43", "SUP-45"]),
+                  qc_share=lambda g: g.u(0.8, 0.95), steel_share=0.05, bad_share=0.0)
 PLAN = [
     # FAR-level readings on facility products
     ("timer", "nonstrict", chain(tw_exact_ratio(3, 4), DOMREQ), None),
-    ("handtruck", "nonstrict", chain(tw_pred_tie, DOMREQ), None),
+    ("cabinet", "nonstrict", chain(tw_pred_tie, DOMREQ), None),
     ("timer", "stale_threshold", DOMREQ, None),
     ("led", "unknown_domestic", DOMREQ, None),
-    ("mat", "cert_no_duty", DOMREQ, None),
+    ("timer", "cert_no_duty", DOMREQ, None),
     ("brush", "ignore_list", DOMREQ, None),
     ("mat", "ignore_list", DOMREQ, None),
     ("timer", "ignore_notice", DOMREQ, None),
     ("cots_kit", "no_cots_waiver", DOMREQ, None),
     ("cots_steel", "cots_waives_steel", DOMREQ, None),
     ("shelving", "count_fasteners", DOMREQ, None),
-    ("led", "profit_in_cost", DOMREQ, None),
+    ("cabinet", "profit_in_cost", DOMREQ, None),
     ("timer", "assembly_in_cost", DOMREQ, None),
     ("led", "tie_foreign", tw_eval_tie, None),
     # DFARS Buy American readings
@@ -670,22 +674,18 @@ PLAN = [
     ("cabinet", "korea_qc", DOMREQ, None),
     ("charger", "factor30", tw_import(1.32, 1.48, sup=lambda g: g.rng.choice(["SUP-22", "SUP-24", "SUP-25"]), bad_share=0.0), None),
     ("led", "factor30", tw_import(1.32, 1.48, sup=lambda g: g.rng.choice(["SUP-22", "SUP-24", "SUP-25"]), bad_share=0.0), None),
-    ("charger", "no_rule_d", tw_two_imports, None),
-    ("timer", "no_rule_d", tw_two_imports, None),
-    ("charger", "austria_exempt", tw_import(1.05, 1.30, sup="SUP-44", qc_share=lambda g: g.u(0.8, 0.95), steel_share=0.05), None),
-    ("cabinet", "qc_import_no_steel_test", tw_import(1.05, 1.30, sup=lambda g: g.rng.choice(["SUP-42", "SUP-45"]),
-                                                       qc_share=lambda g: g.u(0.8, 0.95), steel_share=0.7,
-                                                       nis_share=lambda g: g.u(0.12, 0.4)), None),
+    ("charger", "qc_considered", QCIMP, None),
+    ("led", "qc_considered", QCIMP, None),
     # specialty metals readings
     ("battery_box", "sm_ignore", DOMREQ, veh),
     ("hinge", "sm_ignore", DOMREQ, veh),
     ("battery_box", "sm_everywhere", DOMREQ, look),
     ("hinge", "sm_everywhere", DOMREQ, look),
     ("mount", "sm_nonstrict_comp", DOMREQ, wpn),
-    ("mount", "sm_hsla", FORALLOW, wpn),
-    ("battery_box", "sm_mn_ignore", FORALLOW, veh),
-    ("battery_box", "sm_all_processes", FORALLOW, veh),
-    ("blower", "sm_no_qc_mfg", FORALLOW, veh),
+    ("mount", "sm_hsla", EITHER, wpn),
+    ("battery_box", "sm_mn_ignore", EITHER, veh),
+    ("battery_box", "sm_all_processes", EITHER, veh),
+    ("blower", "sm_no_qc_mfg", EITHER, veh),
     ("blower", "sm_no_qc_mfg", DOMREQ, veh),
     ("hinge", "sm_cost_basis", DOMREQ, veh),
     ("blower", "sm_magnet_2pct", DOMREQ, veh),
@@ -696,7 +696,7 @@ PLAN = [
                                       bad_share=lambda g: g.u(0.3, 0.8)), wpn),
     ("battery_box", "sm_electronic_restricted", DOMREQ, veh),
 ]
-FILLER = [("shelving", None), ("cabinet", None), ("handtruck", None), ("mat", None),
+FILLER = [("shelving", None), ("cabinet", None), ("handtruck", None), ("mat", None), ("brush", None), ("slides", None),
           ("cots_kit", None), ("cots_steel", None), ("blower", "look"), ("mount", "wpn"), ("hinge", "veh")]
 
 
@@ -708,6 +708,7 @@ def build(seed):
         "contracting_agency": "Defense Logistics Agency, Land and Maritime",
         "buy_american_clause": "DFARS 252.225-7001 Buy American and Balance of Payments Program, Basic (FEB 2024)",
         "specialty_metals_clause": "DFARS 252.225-7009 Restriction on Acquisition of Certain Articles Containing Specialty Metals (JAN 2023)",
+        "small_business_set_aside": True,
         "trade_agreements_apply": False,
         "award_basis": "lowest evaluated price",
         "offeror_size": "small",
@@ -722,7 +723,7 @@ def build(seed):
     fees = {}
     for sid, _, _ in SUPPLIERS:
         if sid in NEW_VENDORS:
-            fees[sid] = g.r(6, 30) * 10000
+            fees[sid] = g.r(3, 15) * 10000
         else:
             QUAL.add(sid)
     specs = [(f, fl, tw, use) for f, fl, tw, use in PLAN] + [(f, None, None, use) for f, use in FILLER]

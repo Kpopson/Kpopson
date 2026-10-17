@@ -107,12 +107,12 @@ def test_admissibility_matches_dfars_evaluation(inst, lines):
 
 
 def test_every_line_is_deliverable(inst, builds):
-    """No line delivers a non-domestic end product unless the evaluation allows it."""
+    """No line delivers a non-domestic end product unless the evaluation allows it, nor an offer that may not be considered."""
     bad = []
     for pid, b in builds.items():
         assert b is not None, pid
         st = inst.status(pid)
-        if not (b["domestic"] or st == "foreign_allowed"):
+        if not b.get("considered", True) or not (b["domestic"] or st == "foreign_allowed"):
             bad.append((pid, st, b["track"]))
     assert not bad, bad
 

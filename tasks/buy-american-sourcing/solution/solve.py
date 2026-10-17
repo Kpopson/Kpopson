@@ -17,6 +17,8 @@ Rules applied:
     specialty metal weight may be otherwise noncompliant, but never in a high performance magnet.
     Specialty metal: steel above 1.65 Mn / 0.60 Si / 0.60 Cu or above 0.25 of Al, Cr, Co, Mo, Ni, Nb, Ti,
     W, V; nickel or cobalt alloys with more than 10% other alloying metals; titanium and zirconium.
+  * DFARS 225.872-3(a): in a small business set-aside, offers of qualifying country end products are not
+    considered at all.
   * DFARS 225.502(c)(ii) with the 225.106 50% factor: builds that break the specialty metals rule are not
     acceptable offers; a qualifying country end product (not Austria, which needs a case determination;
     iron/steel ones must also meet the steel test) is exempt from the factor; ties go to domestic.
@@ -61,6 +63,7 @@ FACTOR = Fraction(50, 100)
 AVAILABLE = set(params.get("nonavailable_articles_available_domestically", []))
 EXEMPT_OK = lambda c: c in QUALIFYING and (c not in CASE_BY_CASE or c in params.get("public_interest_determinations", []))
 BUDGET = int(params["qualification_budget_cents"])
+SET_ASIDE = bool(params.get("small_business_set_aside"))
 
 suppliers = {r["supplier_id"]: r for r in rows("suppliers.csv")}
 products = {r["product_id"]: r for r in rows("products.csv")}
@@ -159,7 +162,9 @@ def import_terms(pid, r):
     if country in QUALIFYING:
         smb = 0
     sm_ok = (not covered(pid)) or Fraction(smb) <= Fraction(smt) * Fraction(2, 100)
-    return dict(cost=cost, qcep=qcep, exempt=exempt, smt=smt, smb=smb, sm_ok=sm_ok)
+    considered = not (SET_ASIDE and qcep)          # 225.872-3(a)
+    return dict(cost=cost, qcep=qcep, exempt=exempt and considered, smt=smt, smb=smb, sm_ok=sm_ok,
+                considered=considered)
 
 
 class ProductModel:
@@ -196,7 +201,7 @@ class ProductModel:
         for oid, v in self.imp.items():
             OUTL.append(self.iterms[oid]["cost"] * v)
             EV.append(self.iterms[oid]["cost"] * v)
-            if not self.iterms[oid]["sm_ok"]:
+            if not self.iterms[oid]["sm_ok"] or not self.iterms[oid]["considered"]:
                 m.Add(v == 0)
         self.T, self.Dm, self.IS, self.FIS = sum(T), sum(Dm), sum(IS), sum(FIS)
         self.outlay = sum(OUTL) + asm * self.us
