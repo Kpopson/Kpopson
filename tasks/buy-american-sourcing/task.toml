@@ -6,10 +6,8 @@ schema_version = "2.0"
 name = "insight/buy-american-sourcing"
 
 [metadata]
-author_name = "Kpopson"
 category = "Operations"
 subcategory = "Supply chain"
-difficulty = "hard"
 expert_time_estimate_hours = 5.0
 relevant_experience = "Federal contracts management and Buy American Act compliance (FAR Part 25), supplier sourcing, and mixed-integer optimization"
 tags = ["federal-procurement", "buy-american", "far-part-25", "sourcing", "milp"]
@@ -21,7 +19,10 @@ which costs belong in cost of components, how component origin, steel origin, th
 COTS waiver and its iron and steel exception interact, which domestic content threshold applies to the delivery \
 year, how the small business evaluation factor and the 55 percent fallback decide when a foreign build is \
 acceptable, and that every legal limit is a strict one. The domestic share of each product depends on the \
-sourcing choice itself, and the vendor audits couple all products together."""
+sourcing choice itself, and the vendor audits couple all products together. The solicitation, \
+vendors, offers and imports are synthetic but shaped like a real facility-supplies bid: realistic bills of \
+materials, prices, freight and duty, mixed component and steel origins, and an approved-vendor list; the FAR \
+text applied is the real regulation as amended through FAC 2025-06."""
 solution_explanation = """The reference solution first evaluates each product on its own, as the contracting \
 officer would: it finds the lowest evaluated build, the lowest compliant domestic build and the lowest build over \
 55 percent domestic content (small CP-SAT models, exact integer and Fraction arithmetic), and classifies the line \
@@ -33,7 +34,7 @@ verification_explanation = """The verifier reads only its own copy of the inputs
 every product, applies the rules in exact integer arithmetic, recomputes the evaluation outcome of each product, \
 and finds the minimum total outlay with a separate HiGHS selection model. Tests check the schema, that every \
 product has one valid build, that each reported figure matches the recomputed one, that each evaluation outcome \
-is right, that no line delivers a foreign end product it may not, that the reported track and basis fit the \
+is right, that no line delivers a foreign end product it may not, that the reported track fits the \
 build, that every vendor used is qualified within the audit budget, that the total is the plan's own total, and \
 that the total equals the minimum. Any optimal plan is accepted."""
 
