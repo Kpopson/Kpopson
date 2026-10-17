@@ -1,13 +1,17 @@
 artifacts = ["/app/output/"]
 
 schema_version = "2.0"
+
+[task]
 name = "insight/buy-american-sourcing"
 
 [metadata]
 author_name = "Kpopson"
 category = "Operations"
-subcategory = "Supply Chain"
+subcategory = "Supply chain"
 difficulty = "hard"
+expert_time_estimate_hours = 5.0
+relevant_experience = "Federal contracts management and Buy American Act compliance (FAR Part 25), supplier sourcing, and mixed-integer optimization"
 tags = ["federal-procurement", "buy-american", "far-part-25", "sourcing", "milp"]
 difficulty_explanation = """A small manufacturer bidding a GSA small business set-aside must decide, for 50 end \
 products, which supplier offer to use for every bill-of-materials slot, which new vendors to put through a paid \
@@ -34,13 +38,13 @@ build, that every vendor used is qualified within the audit budget, that the tot
 that the total equals the minimum. Any optimal plan is accepted."""
 
 [verifier]
+environment_mode = "separate"
 timeout_sec = 900.0
 
 [agent]
 timeout_sec = 28800.0
 
 [environment]
-environment_mode = "separate"
 build_timeout_sec = 1800.0
 cpus = 2
 memory_mb = 4096
