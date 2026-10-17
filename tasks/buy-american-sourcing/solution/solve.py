@@ -344,7 +344,6 @@ def main():
             line = dict(product_id=pid, admissibility=status[pid], build="import", offers=None, import_offer=choice,
                         unit_outlay_cents=unit, cost_of_components_cents=None, domestic_component_cost_cents=None,
                         iron_steel_cost_cents=None, foreign_iron_steel_cost_cents=None,
-                        track="foreign",
                         specialty_metals_restricted=pm.covered, specialty_metal_g=t["smt"] if pm.covered else None,
                         noncompliant_specialty_metal_g=t["smb"] if pm.covered else None)
         else:
@@ -361,15 +360,9 @@ def main():
                 FIS += qty * t["fis"]
                 SW += qty * t["smw"]
                 SB += qty * t["bad"]
-            if Fraction(IS) > Fraction(T) / 2:
-                track = "domestic_iron_steel" if Fraction(FIS) < Fraction(T) * Fraction(5, 100) else "foreign"
-            elif pm.cots:
-                track = "domestic_cots"
-            else:
-                track = "domestic_component_test" if Fraction(Dm) > Fraction(T) * Fraction(THRESHOLD, 100) else "foreign"
             line = dict(product_id=pid, admissibility=status[pid], build="us", offers=choice, import_offer=None,
                         unit_outlay_cents=unit, cost_of_components_cents=T, domestic_component_cost_cents=Dm,
-                        iron_steel_cost_cents=IS, foreign_iron_steel_cost_cents=FIS, track=track,
+                        iron_steel_cost_cents=IS, foreign_iron_steel_cost_cents=FIS,
                         specialty_metals_restricted=pm.covered, specialty_metal_g=SW if pm.covered else None,
                         noncompliant_specialty_metal_g=SB if pm.covered else None)
         total += q * unit

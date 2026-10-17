@@ -4,14 +4,14 @@ import os
 
 import pytest
 
-from engine import STATUSES, TRACKS, Instance
+from engine import STATUSES, Instance
 
 PLAN = os.environ.get("PLAN_PATH", "/app/output/plan.json")
 EXPECTED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "expected.json")
 
 LINE_KEYS = {"product_id", "admissibility", "build", "offers", "import_offer", "unit_outlay_cents",
              "cost_of_components_cents", "domestic_component_cost_cents", "iron_steel_cost_cents",
-             "foreign_iron_steel_cost_cents", "track", "specialty_metals_restricted", "specialty_metal_g",
+             "foreign_iron_steel_cost_cents", "specialty_metals_restricted", "specialty_metal_g",
              "noncompliant_specialty_metal_g"}
 
 
@@ -57,7 +57,7 @@ def test_plan_schema(plan):
     assert ids == sorted(ids)
     for l in plan["lines"]:
         assert set(l) == LINE_KEYS, l.get("product_id")
-        assert l["admissibility"] in STATUSES and l["track"] in TRACKS
+        assert l["admissibility"] in STATUSES
         assert l["build"] in ("us", "import")
         assert isinstance(l["specialty_metals_restricted"], bool)
 
@@ -114,17 +114,6 @@ def test_every_line_is_deliverable(inst, builds):
         st = inst.status(pid)
         if not b.get("considered", True) or not (b["domestic"] or st == "foreign_allowed"):
             bad.append((pid, st, b["track"]))
-    assert not bad, bad
-
-
-def test_track_is_consistent(builds, lines):
-    """The reported track is the one the build's own figures satisfy."""
-    bad = []
-    for pid, l in lines.items():
-        b = builds[pid]
-        assert b is not None, pid
-        if l["track"] != b["track"]:
-            bad.append((pid, l["track"], b["track"]))
     assert not bad, bad
 
 

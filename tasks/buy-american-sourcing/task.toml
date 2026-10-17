@@ -41,7 +41,7 @@ every product, applies the rules in exact integer arithmetic, recomputes the eva
 and finds the minimum total outlay with a separate HiGHS selection model. Tests check the schema, that every \
 product has one valid build, that each reported figure matches the recomputed one, that every covered line meets \
 the specialty metals restriction, that each evaluation outcome is right, that no line delivers a non-domestic end \
-product it may not, that the reported track fits the build, that every vendor used is qualified within the audit \
+product it may not, that every vendor used is qualified within the audit \
 budget, that the total is the plan's own total, and that the total equals the minimum. Any optimal plan is accepted."""
 
 [verifier]

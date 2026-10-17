@@ -490,7 +490,7 @@ def to_output(inst, sol):
                           unit_outlay_cents=b["unit_outlay"], cost_of_components_cents=b["cost_of_components"],
                           domestic_component_cost_cents=b["domestic_component_cost"],
                           iron_steel_cost_cents=b["iron_steel_cost"],
-                          foreign_iron_steel_cost_cents=b["foreign_iron_steel_cost"], track=b["track"],
+                          foreign_iron_steel_cost_cents=b["foreign_iron_steel_cost"],
                           specialty_metals_restricted=b["restricted"], specialty_metal_g=b["sm_total"],
                           noncompliant_specialty_metal_g=b["sm_bad"]))
     return dict(total_outlay_cents=sol["total_outlay"], qualification_spend_cents=sol["qualification_spend"],
