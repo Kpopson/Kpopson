@@ -1,51 +1,51 @@
-product_id,description,item_number,quantity,cots_item,assembly_cost_cents
-P01,"Prepared microscope slide set, botany, 25 slides",SLD-1934,210,N,2579
-P02,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-6186,212,N,3756
-P03,"Prepared microscope slide set, botany, 25 slides",SLD-6817,136,N,2563
-P04,"Steel storage cabinet, 2 door, 36 x 18 x 72 in",CAB-2581,94,N,7343
-P05,"Battery charger, 24 V, 40 A",CHG-2136,146,N,4095
-P06,"LED troffer, 2 x 4 ft, 40 W",LED-5125,494,N,1361
-P07,"Scrub brush, deck, 10 in",BRM-9720,333,N,652
-P08,"LED high-bay fixture, 150 W",LED-2992,383,N,1570
-P09,"Industrial floor brush, 18 in",BRM-3865,463,N,548
-P10,"Drainage floor mat, 3 x 10 ft",MAT-8171,373,N,1216
-P11,"Flammable liquid safety cabinet, 30 gal",CAB-9667,139,N,6245
-P12,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-5323,272,N,2223
-P13,"Steel parts bin cabinet, 60 drawer",TCH-6541,192,Y,3198
-P14,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-6401,196,N,3658
-P15,"Anti-fatigue floor mat, 3 x 5 ft",MAT-4636,274,N,714
-P16,"LED wall pack, 80 W",LED-2926,160,N,1905
-P17,"Entrance scraper mat, 4 x 6 ft",MAT-8455,284,N,749
-P18,"Digital cycle counter, DIN rail",TMR-9355,195,N,1475
-P19,"Spill kit, universal, 20 gal",KIT-1098,362,Y,662
-P20,"Boltless rivet shelving, 4 shelf, 60 x 24 x 72 in",SHV-9823,133,N,3321
-P21,"LED high-bay fixture, 150 W",LED-5238,263,N,1518
-P22,"Emergency response kit, 25 person",KIT-4821,286,Y,946
-P23,"Irrigation zone controller, 12 zone",TMR-6220,248,N,1658
-P24,"Forklift battery charger, 48 V, 85 A",CHG-6108,122,N,3980
-P25,"Steel tool chest, 26 in, 5 drawer",TCH-8762,83,Y,4660
-P26,"Stair-climbing hand truck, 500 lb",HTK-2937,354,N,1778
-P27,"Programmable process timer, panel mount",TMR-6484,172,N,1652
-P28,"Digital cycle counter, DIN rail",TMR-7392,260,N,1253
-P29,"LED troffer, 2 x 4 ft, 40 W",LED-1019,335,N,1516
-P30,"HVAC time clock, 7 day",TMR-8524,117,N,1705
-P31,"Appliance hand truck, 800 lb",HTK-5742,278,N,2083
-P32,"Forklift battery charger, 48 V, 85 A",CHG-6608,38,N,4071
-P33,"Digital cycle counter, DIN rail",TMR-1878,391,N,2020
-P34,"Golf cart battery charger, 48 V",CHG-5180,60,N,2588
-P35,"Convertible hand truck, 600 lb",HTK-6465,392,N,2078
-P36,"Battery charger, 24 V, 40 A",CHG-7201,128,N,4099
-P37,"LED vapor-tight fixture, 4 ft",LED-5482,201,N,1230
-P38,"Anti-fatigue floor mat, 3 x 5 ft",MAT-6636,147,N,1058
-P39,"LED vapor-tight fixture, 4 ft",LED-8339,263,N,1988
-P40,"Steel roller cabinet, 41 in, 10 drawer",TCH-5717,102,Y,4731
-P41,"LED wall pack, 80 W",LED-8451,306,N,1498
-P42,"Flammable liquid safety cabinet, 30 gal",CAB-6627,104,N,7132
-P43,"Stair-climbing hand truck, 500 lb",HTK-6136,84,N,1833
-P44,"Eyewash station, portable, 16 gal",KIT-6117,108,Y,767
-P45,"Scrub brush, deck, 10 in",BRM-6636,423,N,470
-P46,"Convertible hand truck, 600 lb",HTK-8508,315,N,2210
-P47,"Push broom, 24 in, stiff fill",BRM-7017,273,N,363
-P48,"Emergency response kit, 25 person",KIT-4724,227,Y,1052
-P49,"Steel storage cabinet, 2 door, 36 x 18 x 72 in",CAB-9636,90,N,6877
-P50,"Boltless rivet shelving, 4 shelf, 60 x 24 x 72 in",SHV-8982,295,N,2974
+product_id,description,item_number,next_higher_assembly,quantity,cots_item,assembly_cost_cents
+P01,NBC filter blower assembly,BLW-9903,M1126 Stryker infantry carrier vehicle,224,N,2221
+P02,Hatch hinge assembly,HNG-4187,M1151A1 HMMWV armament carrier,186,N,1685
+P03,"Anti-fatigue floor mat, 3 x 5 ft",MAT-8432,Warehouse and facility use,397,N,1324
+P04,"LED high-bay fixture, 150 W",LED-2906,Warehouse and facility use,302,N,1848
+P05,"Battery box assembly, 4-battery",BBX-4414,M1083A1 FMTV 5-ton cargo truck,166,N,1545
+P06,"Steel roller cabinet, 41 in, 10 drawer",TCH-7492,Warehouse and facility use,146,Y,3560
+P07,"Battery charger, 24 V, 40 A",CHG-9747,Warehouse and facility use,98,N,2540
+P08,"Spill kit, universal, 20 gal",KIT-5459,Warehouse and facility use,283,Y,572
+P09,Ring mount adapter,MNT-1664,M2A1 .50 caliber machine gun (crew-served weapon),150,N,3121
+P10,"Blank slide kit with cover glass, 144 slides",SLD-9516,Warehouse and facility use,121,N,2097
+P11,NBC filter blower assembly,BLW-2210,M1126 Stryker infantry carrier vehicle,64,N,1647
+P12,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-2772,Warehouse and facility use,105,N,3541
+P13,"Emergency response kit, 25 person",KIT-5772,Warehouse and facility use,103,Y,542
+P14,Tailgate hinge set,HNG-5002,M1151A1 HMMWV armament carrier,279,N,1736
+P15,"Battery box assembly, 4-battery",BBX-8858,M1083A1 FMTV 5-ton cargo truck,160,N,1969
+P16,"Steel wardrobe cabinet, 36 x 24 x 78 in",CAB-3952,Warehouse and facility use,70,N,6958
+P17,"Door hinge assembly, armored",HNG-6765,M1151A1 HMMWV armament carrier,103,N,1121
+P18,"Industrial floor brush, 18 in",BRM-6451,Warehouse and facility use,341,N,563
+P19,"Floor scrubber battery charger, 36 V",CHG-4448,Warehouse and facility use,57,N,3355
+P20,"Forklift battery charger, 48 V, 85 A",CHG-6239,Warehouse and facility use,49,N,3542
+P21,"Steel shelving unit, 6 shelf, 48 x 24 x 84 in",SHV-6794,Warehouse and facility use,156,N,3533
+P22,Battery tray and hold-down kit,BBX-8033,M1083A1 FMTV 5-ton cargo truck,136,N,1211
+P23,Pintle mount assembly,MNT-9795,M240B 7.62 mm machine gun (crew-served weapon),74,N,1830
+P24,"LED high-bay fixture, 150 W",LED-6196,Warehouse and facility use,235,N,1679
+P25,"Anti-fatigue floor mat, 3 x 5 ft",MAT-6989,Warehouse and facility use,324,N,1287
+P26,"Steel wardrobe cabinet, 36 x 24 x 78 in",CAB-9148,Warehouse and facility use,62,N,6258
+P27,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-1105,Warehouse and facility use,128,N,2341
+P28,NBC filter blower assembly,BLW-1563,M1126 Stryker infantry carrier vehicle,231,N,1545
+P29,"LED wall pack, 80 W",LED-5451,Warehouse and facility use,155,N,1909
+P30,"Steel workbench, 72 in",TCH-9172,Warehouse and facility use,138,Y,3437
+P31,"Door hinge assembly, armored",HNG-2422,MB-4 aircraft tow tractor (aircraft ground support equipment),300,N,956
+P32,Tailgate hinge set,HNG-1254,M1126 Stryker infantry carrier vehicle,130,N,1449
+P33,"Programmable process timer, panel mount",TMR-6790,Warehouse and facility use,159,N,2347
+P34,Tailgate hinge set,HNG-9680,M1126 Stryker infantry carrier vehicle,282,N,1606
+P35,"HVAC time clock, 7 day",TMR-7584,Warehouse and facility use,140,N,1343
+P36,"Platform truck, 1200 lb, 24 x 48 in",HTK-9565,Warehouse and facility use,187,N,1570
+P37,"LED troffer, 2 x 4 ft, 40 W",LED-7418,Warehouse and facility use,447,N,1083
+P38,"Drainage floor mat, 3 x 10 ft",MAT-8476,Warehouse and facility use,362,N,794
+P39,"Ventilation blower assembly, 24 V",BLW-5693,"10K all-terrain lifter, army system (ATLAS forklift)",113,N,2339
+P40,Pintle mount assembly,MNT-1904,M2A1 .50 caliber machine gun (crew-served weapon),45,N,2740
+P41,"LED troffer, 2 x 4 ft, 40 W",LED-9648,Warehouse and facility use,287,N,1380
+P42,"Battery box assembly, 4-battery",BBX-5291,MB-4 aircraft tow tractor (aircraft ground support equipment),84,N,2325
+P43,"Programmable process timer, panel mount",TMR-8139,Warehouse and facility use,169,N,1738
+P44,"Digital cycle counter, DIN rail",TMR-1174,Warehouse and facility use,235,N,2050
+P45,Battery tray and hold-down kit,BBX-5336,M1083A1 FMTV 5-ton cargo truck,241,N,1787
+P46,"Platform truck, 1200 lb, 24 x 48 in",HTK-8419,Warehouse and facility use,167,N,2234
+P47,Pintle mount assembly,MNT-1893,M240B 7.62 mm machine gun (crew-served weapon),73,N,2214
+P48,"HVAC time clock, 7 day",TMR-3662,Warehouse and facility use,385,N,1660
+P49,"Flammable liquid safety cabinet, 30 gal",CAB-2456,Warehouse and facility use,167,N,4758
+P50,"Battery box assembly, 4-battery",BBX-9357,M1083A1 FMTV 5-ton cargo truck,197,N,1478

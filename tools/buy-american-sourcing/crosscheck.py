@@ -22,8 +22,8 @@ def main():
             subprocess.run([PY, os.path.join(TASK, "solution", "solve.py")], check=True, capture_output=True,
                            env=dict(os.environ, DATA_DIR=os.path.join(d, "tests", "data"), OUTPUT_DIR=out))
             plan = json.load(open(os.path.join(out, "plan.json")))
-            code = ("import sys,json; sys.path.insert(0, %r); import engine; i=engine.Instance(); b,s=i.optimum();"
-                    "print(json.dumps([b,s]))" % os.path.join(TASK, "tests"))
+            code = ("import sys,json; sys.path.insert(0, %r); import engine; i=engine.Instance(); b=i.optimum();"
+                    "s={p: i.status(p) for p in i.products}; print(json.dumps([b,s]))" % os.path.join(TASK, "tests"))
             r = subprocess.run([PY, "-c", code], check=True, capture_output=True, text=True,
                                env=dict(os.environ, VERIFIER_DATA_DIR=os.path.join(d, "tests", "data")))
             best, st = json.loads(r.stdout)

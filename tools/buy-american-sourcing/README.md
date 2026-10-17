@@ -19,13 +19,10 @@ Regenerate the shipped instance (secret seed is the default in `generate.py`):
 
 Needs `ortools==9.15.6755 scipy==1.18.1 numpy==2.5.3 pytest==9.1.1`.
 
-Rule sources: GSA FAR DITA files (github.com/GSA/GSA-Acquisition-FAR, through FAC 2025-06):
-25.101, 25.103, 25.104, 25.105, 25.106, 25.502, 25.504-1, 52.225-1.
+Rule sources (DoD version): DFARS 252.225-7001 (Basic, FEB 2024), 252.225-7009 (JAN 2023),
+225.7003-1/-2/-3, 225.502(c), 225.106, 225.103, 225.872-1 (pasted from Cornell LII), and the GSA FAR
+DITA files for FAR 25.104 and 25.502(d).
 
-Planted readings (each has at least one product where it changes the answer):
-nonstrict thresholds, 65% for a 2029 delivery, unknown origin as domestic, duty dropped
-under a duty-free certificate, ignoring the 25.104 list, applying the list to the article the
-solicitation says is available, no COTS waiver, COTS waiver covering iron/steel products,
-counting COTS fasteners, steel origin by melt only, by last process, by ore, steel origin used
-as component origin, 20% factor, tie to foreign, no 55% fallback, profit in in-house cost,
-assembly in cost of components, budget-blind plan.
+Planted readings: all keys of bacore.SHORTCUTS (32), plus a budget-blind plan. The generator also
+rejects any product where the FAR 25.106(b)(2) 55% fallback would change the answer, because its
+interaction with DFARS 225.502(c) is ambiguous.

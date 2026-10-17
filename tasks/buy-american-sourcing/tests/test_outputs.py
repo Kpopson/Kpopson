@@ -11,7 +11,8 @@ EXPECTED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "expected.js
 
 LINE_KEYS = {"product_id", "admissibility", "build", "offers", "import_offer", "unit_outlay_cents",
              "cost_of_components_cents", "domestic_component_cost_cents", "iron_steel_cost_cents",
-             "foreign_iron_steel_cost_cents", "track"}
+             "foreign_iron_steel_cost_cents", "track", "specialty_metals_restricted", "specialty_metal_g",
+             "noncompliant_specialty_metal_g"}
 
 
 @pytest.fixture(scope="module")
@@ -58,6 +59,7 @@ def test_plan_schema(plan):
         assert set(l) == LINE_KEYS, l.get("product_id")
         assert l["admissibility"] in STATUSES and l["track"] in TRACKS
         assert l["build"] in ("us", "import")
+        assert isinstance(l["specialty_metals_restricted"], bool)
 
 
 def test_every_product_has_one_valid_build(inst, lines):
@@ -75,10 +77,12 @@ def test_every_product_has_one_valid_build(inst, lines):
 
 
 def test_line_figures_match_recomputation(builds, lines):
-    """Unit outlay, cost of components, domestic component cost and iron/steel figures equal the verifier's."""
+    """Unit outlay, cost of components, domestic component cost, iron/steel and specialty metal figures equal the verifier's."""
     keys = [("unit_outlay_cents", "unit_outlay"), ("cost_of_components_cents", "cost_of_components"),
             ("domestic_component_cost_cents", "domestic_component_cost"), ("iron_steel_cost_cents", "iron_steel_cost"),
-            ("foreign_iron_steel_cost_cents", "foreign_iron_steel_cost")]
+            ("foreign_iron_steel_cost_cents", "foreign_iron_steel_cost"),
+            ("specialty_metals_restricted", "restricted"), ("specialty_metal_g", "specialty_metal_g"),
+            ("noncompliant_specialty_metal_g", "noncompliant_specialty_metal_g")]
     bad = []
     for pid, l in lines.items():
         b = builds[pid]
@@ -89,19 +93,26 @@ def test_line_figures_match_recomputation(builds, lines):
     assert not bad, bad[:10]
 
 
-def test_admissibility_matches_far_evaluation(inst, lines):
-    """Each product's Buy American evaluation outcome (domestic required, 55% fallback, or foreign allowed) is correct."""
+def test_specialty_metals_compliance(builds):
+    """Every line for a covered item meets the DFARS specialty metals restriction."""
+    bad = [pid for pid, b in builds.items() if b is not None and not b["acceptable"]]
+    assert all(b is not None for b in builds.values())
+    assert not bad, bad
+
+
+def test_admissibility_matches_dfars_evaluation(inst, lines):
+    """Each product's Buy American evaluation outcome (domestic required or foreign allowed) is correct."""
     bad = [(pid, l["admissibility"], inst.status(pid)) for pid, l in lines.items() if l["admissibility"] != inst.status(pid)]
     assert not bad, bad
 
 
 def test_every_line_is_deliverable(inst, builds):
-    """No line delivers a foreign end product unless the evaluation allows it (or it is a qualifying >55% fallback build)."""
+    """No line delivers a non-domestic end product unless the evaluation allows it."""
     bad = []
     for pid, b in builds.items():
         assert b is not None, pid
         st = inst.status(pid)
-        if not inst.deliverable(st, b):
+        if not (b["domestic"] or st == "foreign_allowed"):
             bad.append((pid, st, b["track"]))
     assert not bad, bad
 
@@ -140,7 +151,7 @@ def test_total_outlay_matches_plan(inst, plan, builds):
 
 def test_total_outlay_is_minimum(inst, plan):
     """The plan's total outlay equals the minimum achievable under the rules (any optimal plan is accepted)."""
-    best, _ = inst.optimum()
+    best = inst.optimum()
     with open(EXPECTED) as f:
         assert json.load(f)["total_outlay_cents"] == best
     assert plan["total_outlay_cents"] == best, (plan["total_outlay_cents"], best)

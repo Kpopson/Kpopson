@@ -8,35 +8,37 @@ name = "insight/buy-american-sourcing"
 [metadata]
 category = "Operations"
 subcategory = "Supply chain"
-expert_time_estimate_hours = 5.0
-relevant_experience = "Federal contracts management and Buy American Act compliance (FAR Part 25), supplier sourcing, and mixed-integer optimization"
-tags = ["federal-procurement", "buy-american", "far-part-25", "sourcing", "milp"]
-difficulty_explanation = """A small manufacturer bidding a GSA small business set-aside must decide, for 50 end \
-products, which supplier offer to use for every bill-of-materials slot, which new vendors to put through a paid \
-qualification audit within a fixed audit budget, and whether a line can be delivered as a foreign end product. \
-Getting it right means applying FAR 25.101, 25.106, 25.502 and clause 52.225-1 the way a contracts manager does: \
-which costs belong in cost of components, how component origin, steel origin, the nonavailable-article list, the \
-COTS waiver and its iron and steel exception interact, which domestic content threshold applies to the delivery \
-year, how the small business evaluation factor and the 55 percent fallback decide when a foreign build is \
-acceptable, and that every legal limit is a strict one. The domestic share of each product depends on the \
-sourcing choice itself, and the vendor audits couple all products together. The solicitation, \
-vendors, offers and imports are synthetic but shaped like a real facility-supplies bid: realistic bills of \
-materials, prices, freight and duty, mixed component and steel origins, and an approved-vendor list; the FAR \
-text applied is the real regulation as amended through FAC 2025-06."""
+expert_time_estimate_hours = 6.0
+relevant_experience = "Defense contracts management and DoD domestic preference compliance (DFARS Part 225, Buy American and specialty metals), supplier sourcing, and mixed-integer optimization"
+tags = ["defense-procurement", "dfars", "buy-american", "specialty-metals", "sourcing", "milp"]
+difficulty_explanation = """A small manufacturer bidding a Defense Logistics Agency small business set-aside must decide, \
+for 50 end products, which supplier offer to use for every bill-of-materials slot, which new vendors to put through \
+a paid qualification audit within a fixed audit budget, and whether a line may be delivered as a non-domestic end \
+product. Doing it right means applying DFARS the way a defense contracts manager does, on top of FAR Part 25: \
+qualifying country components and steel under 252.225-7001, the evaluation steps of 225.502(c) with the DoD factor, \
+which qualifying country end products are exempt (not Austria without a case determination, and iron or steel ones \
+only if they meet the steel test), and the specialty metals restriction of 252.225-7009 and 225.7003: which items it \
+covers, which steels are specialty metals from their composition, that only the melt location matters, its \
+exceptions for electronic components, COTS items, certified fasteners and items made in a qualifying country, and \
+the 2 percent minimal content rule by weight that excludes magnets. The domestic and specialty metal shares depend \
+on the sourcing choice itself, and the vendor audits couple all products together. The solicitation, vendors, \
+offers and imports are synthetic but shaped like a real defense spares bid: realistic bills of materials, prices, \
+freight and duty, material grades and compositions, mixed component, melt and processing countries, and an \
+approved-vendor list; the regulations applied are the real DFARS and FAR text as amended through 2025."""
 solution_explanation = """The reference solution first evaluates each product on its own, as the contracting \
-officer would: it finds the lowest evaluated build, the lowest compliant domestic build and the lowest build over \
-55 percent domestic content (small CP-SAT models, exact integer and Fraction arithmetic), and classifies the line \
-as domestic required, fallback required or foreign allowed. It then solves one CP-SAT model over all products that \
-picks one build per product and the vendor audits, with the domestic content, iron and steel predominance and \
-foreign iron and steel tests written as exact integer constraints, and minimizes total outlay within the audit \
-budget. It is proven optimal."""
+officer would under DFARS 225.502(c)(ii): it removes builds that break the specialty metals restriction, finds the \
+lowest evaluated build and the lowest domestic build with small CP-SAT models in exact integer and Fraction \
+arithmetic, checks the exempt qualifying country imports, applies the 50 percent factor, and classifies the line as \
+domestic required or foreign allowed. It then solves one CP-SAT model over all products that picks one build per \
+product and the vendor audits, with the domestic content, iron and steel and specialty metal tests written as exact \
+integer constraints, and minimizes total outlay within the audit budget. It is proven optimal."""
 verification_explanation = """The verifier reads only its own copy of the inputs. It enumerates every build of \
 every product, applies the rules in exact integer arithmetic, recomputes the evaluation outcome of each product, \
 and finds the minimum total outlay with a separate HiGHS selection model. Tests check the schema, that every \
-product has one valid build, that each reported figure matches the recomputed one, that each evaluation outcome \
-is right, that no line delivers a foreign end product it may not, that the reported track fits the \
-build, that every vendor used is qualified within the audit budget, that the total is the plan's own total, and \
-that the total equals the minimum. Any optimal plan is accepted."""
+product has one valid build, that each reported figure matches the recomputed one, that every covered line meets \
+the specialty metals restriction, that each evaluation outcome is right, that no line delivers a non-domestic end \
+product it may not, that the reported track fits the build, that every vendor used is qualified within the audit \
+budget, that the total is the plan's own total, and that the total equals the minimum. Any optimal plan is accepted."""
 
 [verifier]
 environment_mode = "separate"

@@ -1,13 +1,17 @@
 {
-  "solicitation": "FSS-26-0418, facility maintenance supplies, total small business set-aside",
-  "contracting_agency": "General Services Administration, Federal Acquisition Service",
-  "buy_american_clause": "FAR 52.225-1 Buy American-Supplies (Oct 2022), basic clause (no Alternate I)",
+  "solicitation": "SPE7L3-27-R-0118, tactical vehicle and weapon spares plus facility supplies, total small business set-aside",
+  "contracting_agency": "Defense Logistics Agency, Land and Maritime",
+  "buy_american_clause": "DFARS 252.225-7001 Buy American and Balance of Payments Program, Basic (FEB 2024)",
+  "specialty_metals_clause": "DFARS 252.225-7009 Restriction on Acquisition of Certain Articles Containing Specialty Metals (JAN 2023)",
   "trade_agreements_apply": false,
+  "award_basis": "lowest evaluated price",
   "offeror_size": "small",
   "delivery_calendar_year": 2029,
-  "evaluation_date": "2026-12-01",
+  "evaluation_date": "2027-02-15",
   "nonavailable_articles_available_domestically": [
     "Quartz crystals"
   ],
-  "qualification_budget_cents": 2330000
+  "public_interest_determinations": [],
+  "specialty_metal_nonavailability_determinations": [],
+  "qualification_budget_cents": 430000
 }
