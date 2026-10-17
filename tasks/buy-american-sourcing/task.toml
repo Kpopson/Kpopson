@@ -15,20 +15,24 @@ difficulty_explanation = """A small manufacturer bidding a Defense Logistics Age
 for 50 end products, which supplier offer to use for every bill-of-materials slot, which new vendors to put through \
 a paid qualification audit within a fixed audit budget, and whether a line may be delivered as a non-domestic end \
 product. Doing it right means applying DFARS the way a defense contracts manager does, on top of FAR Part 25: \
-qualifying country components and steel under 252.225-7001, the evaluation steps of 225.502(c) with the DoD factor, \
-which qualifying country end products are exempt (not Austria without a case determination, and iron or steel ones \
-only if they meet the steel test), and the specialty metals restriction of 252.225-7009 and 225.7003: which items it \
-covers, which steels are specialty metals from their composition, that only the melt location matters, its \
-exceptions for electronic components, COTS items, certified fasteners and items made in a qualifying country, and \
-the 2 percent minimal content rule by weight that excludes magnets. The domestic and specialty metal shares depend \
-on the sourcing choice itself, and the vendor audits couple all products together. The solicitation, vendors, \
-offers and imports are synthetic but shaped like a real defense spares bid: realistic bills of materials, prices, \
-freight and duty, material grades and compositions, mixed component, melt and processing countries, and an \
+qualifying country components and steel under 252.225-7001, that qualifying country end products are not \
+considered at all in a small business set-aside (225.872-3(a)), the 225.502(c) evaluation with the DoD factor, and \
+the specialty metals restriction of 252.225-7009 and 225.7003: which items it covers, which steels are specialty \
+metals from their composition (including electrical steel), that only the melt location matters, its exceptions \
+for electronic components, COTS items, certified fasteners and items made in a qualifying country, and the 2 \
+percent minimal content rule by weight that excludes magnets. Purchased sub-assemblies make the two clauses pull \
+apart: Buy American counts a sub-assembly as one component by its own origin, while the specialty metals \
+restriction reaches every tier, excepts a qualifying-country sub-assembly as a whole, and lets a COTS assembly \
+cover its forgings but not its magnets. The domestic and specialty metal shares depend on the sourcing choice \
+itself, and the vendor audits couple all products together. The solicitation, vendors, offers, sub-assembly \
+contents and imports are synthetic but shaped like a real defense spares bid: realistic bills of materials, \
+prices, freight and duty, material grades and compositions, mixed component, melt and processing countries, and an \
 approved-vendor list; the regulations applied are the real DFARS and FAR text as amended through 2025."""
 solution_explanation = """The reference solution first evaluates each product on its own, as the contracting \
-officer would under DFARS 225.502(c)(ii): it removes builds that break the specialty metals restriction, finds the \
+officer would under DFARS 225.502(c)(ii): it drops qualifying country end products under 225.872-3(a), removes \
+builds that break the specialty metals restriction (evaluated through every sub-assembly tier), finds the \
 lowest evaluated build and the lowest domestic build with small CP-SAT models in exact integer and Fraction \
-arithmetic, checks the exempt qualifying country imports, applies the 50 percent factor, and classifies the line as \
+arithmetic, applies the 50 percent factor, and classifies the line as \
 domestic required or foreign allowed. It then solves one CP-SAT model over all products that picks one build per \
 product and the vendor audits, with the domestic content, iron and steel and specialty metal tests written as exact \
 integer constraints, and minimizes total outlay within the audit budget. It is proven optimal."""

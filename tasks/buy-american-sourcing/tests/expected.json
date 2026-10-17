@@ -1,11 +1,11 @@
 {
-  "total_outlay_cents": 110939386,
+  "total_outlay_cents": 104250515,
   "admissibility": {
     "P01": "domestic_required",
-    "P02": "domestic_required",
+    "P02": "foreign_allowed",
     "P03": "domestic_required",
     "P04": "domestic_required",
-    "P05": "foreign_allowed",
+    "P05": "domestic_required",
     "P06": "domestic_required",
     "P07": "domestic_required",
     "P08": "domestic_required",
@@ -14,7 +14,7 @@
     "P11": "domestic_required",
     "P12": "domestic_required",
     "P13": "domestic_required",
-    "P14": "domestic_required",
+    "P14": "foreign_allowed",
     "P15": "domestic_required",
     "P16": "domestic_required",
     "P17": "domestic_required",
@@ -23,7 +23,7 @@
     "P20": "domestic_required",
     "P21": "domestic_required",
     "P22": "domestic_required",
-    "P23": "domestic_required",
+    "P23": "foreign_allowed",
     "P24": "domestic_required",
     "P25": "domestic_required",
     "P26": "domestic_required",
@@ -52,6 +52,6 @@
     "P49": "domestic_required",
     "P50": "domestic_required"
   },
-  "unbudgeted_total_outlay_cents": 110219645,
+  "unbudgeted_total_outlay_cents": 103556355,
   "unbudgeted_spend_cents": 470000
 }

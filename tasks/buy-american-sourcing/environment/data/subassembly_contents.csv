@@ -1,0 +1,174 @@
+assembly_offer_id,item_no,description,qty,item_origin,part_form,component_cots,metal_material,metal_g_per_piece,metal_melt_country,metal_rolling_country,metal_coating_country,iron_steel_cost_cents,unit_cost_cents
+C0016,1,"Lock body, forged",1,US,forging,N,MAT-4140,470,US,US,NONE,684,684
+C0016,2,Plunger,1,US,machined_part,N,MAT-4340,87,US,US,NONE,216,216
+C0016,3,Detent spring,1,US,machined_part,N,MAT-5160,21,US,US,NONE,76,76
+C0017,1,"Lock body, forged",1,US,forging,N,MAT-4140,470,KR,KR,NONE,684,684
+C0017,2,Plunger,1,US,machined_part,N,MAT-4340,87,US,US,NONE,216,216
+C0017,3,Detent spring,1,US,machined_part,N,MAT-5160,21,US,US,NONE,76,76
+C0018,1,"Lock body, forged",1,CN,forging,N,MAT-4140,470,CN,CN,NONE,684,684
+C0018,2,Plunger,1,CN,machined_part,N,MAT-4340,87,CN,CN,NONE,216,216
+C0018,3,Detent spring,1,CN,machined_part,N,MAT-5160,21,CN,CN,NONE,76,76
+C0055,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,53,JP,JP,NONE,0,1935
+C0055,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,853,US,US,NONE,643,643
+C0055,3,Rotor shaft,1,US,machined_part,N,MAT-304,79,US,US,NONE,315,315
+C0055,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,351
+C0056,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,53,CN,CN,NONE,0,1935
+C0056,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,853,CN,CN,NONE,643,643
+C0056,3,Rotor shaft,1,CN,machined_part,N,MAT-304,79,CN,CN,NONE,315,315
+C0056,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,351
+C0057,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,53,JP,JP,NONE,0,1935
+C0057,2,Stator lamination stack,1,KR,fabricated_part,N,MAT-M19,853,KR,KR,NONE,643,643
+C0057,3,Rotor shaft,1,KR,machined_part,N,MAT-304,79,KR,KR,NONE,315,315
+C0057,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,351
+C0058,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,53,CN,CN,NONE,0,1935
+C0058,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,853,US,US,NONE,643,643
+C0058,3,Rotor shaft,1,US,machined_part,N,MAT-304,79,US,US,NONE,315,315
+C0058,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,351
+C0107,1,"Lock body, forged",1,US,forging,N,MAT-4140,410,US,US,NONE,659,659
+C0107,2,Plunger,1,US,machined_part,N,MAT-4340,80,US,US,NONE,222,222
+C0107,3,Detent spring,1,US,machined_part,N,MAT-5160,21,US,US,NONE,42,42
+C0108,1,"Lock body, forged",1,IT,forging,N,MAT-4140,410,CN,CN,NONE,659,659
+C0108,2,Plunger,1,IT,machined_part,N,MAT-4340,80,CN,CN,NONE,222,222
+C0108,3,Detent spring,1,IT,machined_part,N,MAT-5160,21,CN,CN,NONE,42,42
+C0109,1,"Lock body, forged",1,CN,forging,N,MAT-4140,410,CN,CN,NONE,659,659
+C0109,2,Plunger,1,CN,machined_part,N,MAT-4340,80,CN,CN,NONE,222,222
+C0109,3,Detent spring,1,CN,machined_part,N,MAT-5160,21,CN,CN,NONE,42,42
+C0149,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,88,JP,JP,NONE,0,2084
+C0149,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,825,US,US,NONE,647,647
+C0149,3,Rotor shaft,1,US,machined_part,N,MAT-304,109,US,US,NONE,426,426
+C0149,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,451
+C0150,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,88,JP,JP,NONE,0,2084
+C0150,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,825,US,US,NONE,647,647
+C0150,3,Rotor shaft,1,KR,machined_part,N,MAT-304,109,KR,KR,NONE,426,426
+C0150,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,451
+C0151,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,88,JP,JP,NONE,0,2084
+C0151,2,Stator lamination stack,1,KR,fabricated_part,N,MAT-M19,825,KR,KR,NONE,647,647
+C0151,3,Rotor shaft,1,KR,machined_part,N,MAT-304,109,KR,KR,NONE,426,426
+C0151,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,451
+C0152,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,88,JP,JP,NONE,0,2084
+C0152,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,825,CN,CN,NONE,647,647
+C0152,3,Rotor shaft,1,CN,machined_part,N,MAT-304,109,CN,CN,NONE,426,426
+C0152,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,451
+C0183,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,75,JP,JP,NONE,0,2432
+C0183,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,689,US,US,NONE,774,774
+C0183,3,Rotor shaft,1,US,machined_part,N,MAT-304,81,US,US,NONE,321,321
+C0183,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,459
+C0184,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,75,CN,CN,NONE,0,2432
+C0184,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,689,CN,CN,NONE,774,774
+C0184,3,Rotor shaft,1,CN,machined_part,N,MAT-304,81,CN,CN,NONE,321,321
+C0184,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,459
+C0185,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,75,CN,CN,NONE,0,2432
+C0185,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,689,CN,CN,NONE,774,774
+C0185,3,Rotor shaft,1,CN,machined_part,N,MAT-304,81,CN,CN,NONE,321,321
+C0185,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,459
+C0186,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,75,CN,CN,NONE,0,2432
+C0186,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,689,CN,CN,NONE,774,774
+C0186,3,Rotor shaft,1,CN,machined_part,N,MAT-304,81,CN,CN,NONE,321,321
+C0186,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,459
+C0313,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,76,JP,JP,NONE,0,2324
+C0313,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,845,US,US,NONE,513,513
+C0313,3,Rotor shaft,1,US,machined_part,N,MAT-304,72,US,US,NONE,283,283
+C0313,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0314,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,76,JP,JP,NONE,0,2324
+C0314,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,845,US,US,NONE,513,513
+C0314,3,Rotor shaft,1,KR,machined_part,N,MAT-304,72,KR,KR,NONE,283,283
+C0314,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0315,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,76,JP,JP,NONE,0,2324
+C0315,2,Stator lamination stack,1,KR,fabricated_part,N,MAT-M19,845,KR,KR,NONE,513,513
+C0315,3,Rotor shaft,1,KR,machined_part,N,MAT-304,72,KR,KR,NONE,283,283
+C0315,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0316,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,76,CN,CN,NONE,0,2324
+C0316,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,845,US,US,NONE,513,513
+C0316,3,Rotor shaft,1,US,machined_part,N,MAT-304,72,US,US,NONE,283,283
+C0316,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0353,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,61,JP,JP,NONE,0,1873
+C0353,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,861,US,US,NONE,596,596
+C0353,3,Rotor shaft,1,US,machined_part,N,MAT-304,89,US,US,NONE,383,383
+C0353,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,410
+C0354,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,61,JP,JP,NONE,0,1873
+C0354,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,861,US,US,NONE,596,596
+C0354,3,Rotor shaft,1,KR,machined_part,N,MAT-304,89,KR,KR,NONE,383,383
+C0354,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,410
+C0355,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,61,CN,CN,NONE,0,1873
+C0355,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,861,US,US,NONE,596,596
+C0355,3,Rotor shaft,1,US,machined_part,N,MAT-304,89,US,US,NONE,383,383
+C0355,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,410
+C0356,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,61,CN,CN,NONE,0,1873
+C0356,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,861,CN,CN,NONE,596,596
+C0356,3,Rotor shaft,1,CN,machined_part,N,MAT-304,89,CN,CN,NONE,383,383
+C0356,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,410
+C0378,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,86,JP,JP,NONE,0,2083
+C0378,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,899,US,US,NONE,516,516
+C0378,3,Rotor shaft,1,US,machined_part,N,MAT-304,105,US,US,NONE,438,438
+C0378,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,467
+C0379,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,86,CN,CN,NONE,0,2083
+C0379,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,899,CN,CN,NONE,516,516
+C0379,3,Rotor shaft,1,CN,machined_part,N,MAT-304,105,CN,CN,NONE,438,438
+C0379,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,467
+C0380,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,86,JP,JP,NONE,0,2083
+C0380,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,899,CN,CN,NONE,516,516
+C0380,3,Rotor shaft,1,CN,machined_part,N,MAT-304,105,CN,CN,NONE,438,438
+C0380,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,467
+C0381,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,86,JP,JP,NONE,0,2083
+C0381,2,Stator lamination stack,1,KR,fabricated_part,N,MAT-M19,899,KR,KR,NONE,516,516
+C0381,3,Rotor shaft,1,KR,machined_part,N,MAT-304,105,KR,KR,NONE,438,438
+C0381,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,467
+C0405,1,"Lock body, forged",1,US,forging,N,MAT-4140,440,US,US,NONE,647,647
+C0405,2,Plunger,1,US,machined_part,N,MAT-4340,91,US,US,NONE,215,215
+C0405,3,Detent spring,1,US,machined_part,N,MAT-5160,22,US,US,NONE,48,48
+C0406,1,"Lock body, forged",1,US,forging,N,MAT-4140,440,KR,KR,NONE,647,647
+C0406,2,Plunger,1,US,machined_part,N,MAT-4340,91,US,US,NONE,215,215
+C0406,3,Detent spring,1,US,machined_part,N,MAT-5160,22,US,US,NONE,48,48
+C0407,1,"Lock body, forged",1,CN,forging,N,MAT-4140,440,CN,CN,NONE,647,647
+C0407,2,Plunger,1,CN,machined_part,N,MAT-4340,91,CN,CN,NONE,215,215
+C0407,3,Detent spring,1,CN,machined_part,N,MAT-5160,22,CN,CN,NONE,48,48
+C0536,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,76,JP,JP,NONE,0,2659
+C0536,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,632,US,US,NONE,547,547
+C0536,3,Rotor shaft,1,US,machined_part,N,MAT-304,73,US,US,NONE,340,340
+C0536,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,403
+C0537,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,76,CN,CN,NONE,0,2659
+C0537,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,632,CN,CN,NONE,547,547
+C0537,3,Rotor shaft,1,CN,machined_part,N,MAT-304,73,CN,CN,NONE,340,340
+C0537,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,403
+C0538,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,76,CN,CN,NONE,0,2659
+C0538,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,632,CN,CN,NONE,547,547
+C0538,3,Rotor shaft,1,CN,machined_part,N,MAT-304,73,CN,CN,NONE,340,340
+C0538,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,403
+C0539,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,76,JP,JP,NONE,0,2659
+C0539,2,Stator lamination stack,1,KR,fabricated_part,N,MAT-M19,632,KR,KR,NONE,547,547
+C0539,3,Rotor shaft,1,KR,machined_part,N,MAT-304,73,KR,KR,NONE,340,340
+C0539,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,403
+C0576,1,"Lock body, forged",1,US,forging,N,MAT-4140,489,US,US,NONE,642,642
+C0576,2,Plunger,1,US,machined_part,N,MAT-4340,76,US,US,NONE,311,311
+C0576,3,Detent spring,1,US,machined_part,N,MAT-5160,22,US,US,NONE,55,55
+C0577,1,"Lock body, forged",1,CN,forging,N,MAT-4140,489,CN,CN,NONE,642,642
+C0577,2,Plunger,1,CN,machined_part,N,MAT-4340,76,CN,CN,NONE,311,311
+C0577,3,Detent spring,1,CN,machined_part,N,MAT-5160,22,CN,CN,NONE,55,55
+C0578,1,"Lock body, forged",1,IT,forging,N,MAT-4140,489,CN,CN,NONE,642,642
+C0578,2,Plunger,1,IT,machined_part,N,MAT-4340,76,CN,CN,NONE,311,311
+C0578,3,Detent spring,1,IT,machined_part,N,MAT-5160,22,CN,CN,NONE,55,55
+C0610,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,71,JP,JP,NONE,0,2583
+C0610,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,661,US,US,NONE,618,618
+C0610,3,Rotor shaft,1,US,machined_part,N,MAT-304,110,US,US,NONE,418,418
+C0610,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0611,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,71,CN,CN,NONE,0,2583
+C0611,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,661,CN,CN,NONE,618,618
+C0611,3,Rotor shaft,1,CN,machined_part,N,MAT-304,110,CN,CN,NONE,418,418
+C0611,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0612,1,"Rotor magnet, SmCo",1,CN,magnet,N,MAT-SMCO,71,CN,CN,NONE,0,2583
+C0612,2,Stator lamination stack,1,US,fabricated_part,N,MAT-M19,661,US,US,NONE,618,618
+C0612,3,Rotor shaft,1,US,machined_part,N,MAT-304,110,US,US,NONE,418,418
+C0612,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0613,1,"Rotor magnet, SmCo",1,JP,magnet,N,MAT-SMCO,71,JP,JP,NONE,0,2583
+C0613,2,Stator lamination stack,1,CN,fabricated_part,N,MAT-M19,661,CN,CN,NONE,618,618
+C0613,3,Rotor shaft,1,CN,machined_part,N,MAT-304,110,CN,CN,NONE,418,418
+C0613,4,"End bell pair, cast aluminum",1,US,casting,N,MAT-6061,300,US,US,NONE,0,317
+C0638,1,"Lock body, forged",1,US,forging,N,MAT-4140,537,US,US,NONE,627,627
+C0638,2,Plunger,1,US,machined_part,N,MAT-4340,92,US,US,NONE,248,248
+C0638,3,Detent spring,1,US,machined_part,N,MAT-5160,23,US,US,NONE,61,61
+C0639,1,"Lock body, forged",1,IT,forging,N,MAT-4140,537,CN,CN,NONE,627,627
+C0639,2,Plunger,1,IT,machined_part,N,MAT-4340,92,CN,CN,NONE,248,248
+C0639,3,Detent spring,1,IT,machined_part,N,MAT-5160,23,CN,CN,NONE,61,61
+C0640,1,"Lock body, forged",1,US,forging,N,MAT-4140,537,KR,KR,NONE,627,627
+C0640,2,Plunger,1,US,machined_part,N,MAT-4340,92,US,US,NONE,248,248
+C0640,3,Detent spring,1,US,machined_part,N,MAT-5160,23,US,US,NONE,61,61

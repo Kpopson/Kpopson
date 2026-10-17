@@ -79,6 +79,12 @@ SHORTCUTS = {
     "sm_strict_2pct": "requires noncompliant content strictly below 2%",
     "sm_no_elim": "does not drop specialty-metal-noncompliant builds before the price evaluation",
     "sm_electronic_restricted": "applies the restriction to electronic components",
+    "always_domestic": "treats every line as domestic required",
+    # sub-assemblies
+    "ba_rollup": "rolls sub-assembly contents into the Buy American component test instead of using the assembly's own origin",
+    "sm_top_level_only": "ignores specialty metal inside purchased sub-assemblies",
+    "sm_cots_assembly_magnet": "lets the COTS exception cover magnets inside a COTS assembly",
+    "sm_cots_assembly_ignored": "tests the contents of a COTS assembly item by item",
 }
 # not a calibrated shortcut: the generator rejects any product where the FAR 25.106(b)(2) fallback would matter
 GUARD_FLAGS = {"far_fallback"}
@@ -114,7 +120,11 @@ def load(data_dir):
     for r in _rows(j("finished_imports.csv")):
         imports[r["offer_id"]] = r
         imports_by_product.setdefault(r["product_id"], []).append(r)
-    return dict(params=params, suppliers={r["supplier_id"]: r for r in _rows(j("suppliers.csv"))},
+    subs = {}
+    if os.path.exists(j("subassembly_contents.csv")):
+        for r in _rows(j("subassembly_contents.csv")):
+            subs.setdefault(r["assembly_offer_id"], []).append(r)
+    return dict(params=params, subs=subs, suppliers={r["supplier_id"]: r for r in _rows(j("suppliers.csv"))},
                 products={r["product_id"]: r for r in _rows(j("products.csv"))},
                 materials={r["material_id"]: r for r in _rows(j("materials.csv"))},
                 bom=bom, offers=offers, by_slot=by_slot, imports=imports, imports_by_product=imports_by_product)
@@ -209,30 +219,82 @@ class Rules:
             return False
         return not (item in self.notice and "ignore_notice" not in self.f)
 
-    def sm_piece(self, o, pc):
-        """(sm_weight, noncompliant_weight, noncompliant_magnet) for one piece; pc = piece cost for cost basis."""
-        if not self.is_sm(o["metal_material"]):
+    def sm_item(self, origin, form, cots, cert, mat, w, melt, roll, coat, cots_parent=False):
+        """(weight, noncompliant weight, noncompliant magnet) for one item of weight w."""
+        if not self.is_sm(mat):
             return 0, 0, False
-        w = pc if "sm_cost_basis" in self.f else _int(o["metal_g_per_piece"])
-        form = o["part_form"]
         if form == "electronic" and "sm_electronic_restricted" not in self.f:
             return w, 0, False
-        if o["component_origin"] in QC and "sm_no_qc_mfg" not in self.f:
+        if origin in QC and "sm_no_qc_mfg" not in self.f:
             return w, 0, False
-        if o["component_cots"] == "Y" and (form not in SM_FORMS_NOT_COTS_EXCEPTED or "sm_cots_all" in self.f):
+        if cots_parent:
+            # inside a COTS assembly: mill products, forgings, castings and fasteners are excepted;
+            # magnets only when inside COTS end items or subsystems
+            if form != "magnet" or "sm_cots_assembly_magnet" in self.f:
+                return w, 0, False
+        elif cots == "Y" and (form not in SM_FORMS_NOT_COTS_EXCEPTED or "sm_cots_all" in self.f):
             return w, 0, False
-        if form == "fastener" and o["fastener_mfr_dod_certified"] == "Y" and "sm_no_fastener_cert" not in self.f:
+        if form == "fastener" and cert == "Y" and "sm_no_fastener_cert" not in self.f:
             return w, 0, False
-        melt_ok = o["metal_melt_country"] == "US" or o["metal_melt_country"] in self.sm_qc
+        melt_ok = melt == "US" or melt in self.sm_qc
         if "sm_all_processes" in self.f:
-            for c in (o["metal_rolling_country"], o["metal_coating_country"]):
-                if c not in ("NONE", "US") and c not in self.sm_qc:
+            for c in (roll, coat):
+                if c not in ("NONE", "US", "") and c not in self.sm_qc:
                     melt_ok = False
         if melt_ok:
             return w, 0, False
         if form == "magnet" and "sm_magnet_2pct" not in self.f:
             return w, 0, True
         return w, w, False
+
+    def sm_piece(self, o, pc):
+        """(sm_weight, noncompliant_weight, noncompliant_magnet) for one piece; pc = piece cost for cost basis."""
+        if o["part_form"] == "assembly":
+            return self.sm_assembly(o)
+        w = pc if "sm_cost_basis" in self.f else _int(o["metal_g_per_piece"])
+        return self.sm_item(o["component_origin"], o["part_form"], o["component_cots"], o["fastener_mfr_dod_certified"],
+                            o["metal_material"], w, o["metal_melt_country"], o["metal_rolling_country"],
+                            o["metal_coating_country"])
+
+    def sm_assembly(self, o):
+        if "sm_top_level_only" in self.f:
+            return 0, 0, False
+        T = B = 0
+        mag = False
+        whole_qc = o["component_origin"] in QC and "sm_no_qc_mfg" not in self.f
+        cots_parent = o["component_cots"] == "Y" and "sm_cots_assembly_ignored" not in self.f
+        for r in self.inst["subs"].get(o["offer_id"], []):
+            q = int(r["qty"])
+            w = _int(r["unit_cost_cents"]) if "sm_cost_basis" in self.f else _int(r["metal_g_per_piece"])
+            if whole_qc:
+                T += q * (w if self.is_sm(r["metal_material"]) else 0)
+                continue
+            iw, ib, im = self.sm_item(r["item_origin"], r["part_form"], r["component_cots"], "N", r["metal_material"], w,
+                                      r["metal_melt_country"], r["metal_rolling_country"], r["metal_coating_country"],
+                                      cots_parent=cots_parent)
+            T += q * iw
+            B += q * ib
+            mag = mag or im
+        return T, B, mag
+
+    def assembly_fis(self, o):
+        f = 0
+        for r in self.inst["subs"].get(o["offer_id"], []):
+            ist = _int(r["iron_steel_cost_cents"])
+            if not ist:
+                continue
+            steps = [r["metal_melt_country"], r["metal_rolling_country"]]
+            if r["metal_coating_country"] not in ("NONE", ""):
+                steps.append(r["metal_coating_country"])
+            if not all(self.ok_country(x) for x in steps):
+                f += int(r["qty"]) * ist
+        return f
+
+    def rollup_domestic(self, o, pc):
+        inner = self.inst["subs"].get(o["offer_id"], [])
+        tot = sum(int(r["qty"]) * _int(r["unit_cost_cents"]) for r in inner)
+        dom = sum(int(r["qty"]) * _int(r["unit_cost_cents"]) for r in inner if self.ok_country(r["item_origin"]))
+        return pc * dom // tot if tot else 0
 
     def sm_ok(self, total, bad, magnet_bad):
         if magnet_bad:
@@ -252,12 +314,17 @@ class Rules:
             outlay += q * po
             ev += q * pe
             T += q * pc
-            if self.comp_domestic(o):
+            asm_part = o["part_form"] == "assembly"
+            if asm_part and "ba_rollup" in self.f:
+                Dm += q * self.rollup_domestic(o, pc)
+            elif self.comp_domestic(o):
                 Dm += q * pc
             ist = _int(o["iron_steel_cost_cents"])
             if ist and (o["cots_fastener"] != "Y" or "count_fasteners" in self.f):
                 IS += q * ist
-                if self.steel_foreign(o):
+                if asm_part:
+                    FIS += q * self.assembly_fis(o)
+                elif self.steel_foreign(o):
                     FIS += q * ist
             w, bad, m = self.sm_piece(o, pc)
             SMT += q * w
@@ -323,6 +390,8 @@ class Rules:
 
     def admissibility(self, pid, blds):
         """DFARS 225.502(c)(ii), price the determining factor. Returns (status, info)."""
+        if "always_domestic" in self.f:
+            return "domestic_required", {}
         blds = [b for b in blds if b.get("considered", True)]       # 225.872-3(a)
         acc = blds if "sm_no_elim" in self.f else [b for b in blds if b["sm_ok"]]
         if not acc:

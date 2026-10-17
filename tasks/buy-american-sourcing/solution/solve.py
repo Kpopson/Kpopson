@@ -15,6 +15,11 @@ Rules applied:
     castings, magnets or fasteners going into a non-COTS item), commercial fasteners whose maker
     certified the 50% domestic purchase, and items manufactured in a qualifying country; up to 2% of the
     specialty metal weight may be otherwise noncompliant, but never in a high performance magnet.
+    The restriction reaches every tier: specialty metal inside a purchased sub-assembly counts. A
+    sub-assembly made in a qualifying country is excepted as a whole; inside a COTS assembly, forgings,
+    castings, mill products, fasteners and parts are excepted but magnets are not (only COTS end items
+    and subsystems cover magnets). For Buy American a sub-assembly is one component: only its own
+    origin matters.
     Specialty metal: steel above 1.65 Mn / 0.60 Si / 0.60 Cu or above 0.25 of Al, Cr, Co, Mo, Ni, Nb, Ti,
     W, V; nickel or cobalt alloys with more than 10% other alloying metals; titanium and zirconium.
   * DFARS 225.872-3(a): in a small business set-aside, offers of qualifying country end products are not
@@ -74,6 +79,9 @@ for r in rows("bom.csv"):
 offers = {}
 for r in rows("component_offers.csv"):
     offers.setdefault((r["product_id"], r["slot"]), []).append(r)
+contents = {}
+for r in rows("subassembly_contents.csv"):
+    contents.setdefault(r["assembly_offer_id"], []).append(r)
 imports = {}
 for r in rows("finished_imports.csv"):
     imports.setdefault(r["product_id"], []).append(r)
@@ -107,6 +115,38 @@ def covered(pid):
     return any(k in use for k in COVERED)
 
 
+def item_metal(origin, form, cots, certified, mid, grams, melt, in_cots_assembly=False):
+    """(specialty metal grams, noncompliant grams, noncompliant magnet?) for one item."""
+    if not specialty_metal(mid):
+        return 0, 0, False
+    if form == "electronic" or origin in QUALIFYING or ok_country(melt):
+        return grams, 0, False
+    if in_cots_assembly and form != "magnet":
+        return grams, 0, False
+    if not in_cots_assembly and cots == "Y" and form not in ("mill_product", "forging", "casting", "magnet", "fastener"):
+        return grams, 0, False
+    if form == "fastener" and certified == "Y":
+        return grams, 0, False
+    return (grams, 0, True) if form == "magnet" else (grams, grams, False)
+
+
+def assembly_metal(o):
+    total = bad = 0
+    magnet = False
+    for r in contents.get(o["offer_id"], []):
+        q = int(r["qty"])
+        g = n(r["metal_g_per_piece"])
+        if o["component_origin"] in QUALIFYING:          # item manufactured in a qualifying country
+            total += q * (g if specialty_metal(r["metal_material"]) else 0)
+            continue
+        w, b, m = item_metal(r["item_origin"], r["part_form"], r["component_cots"], "N", r["metal_material"], g,
+                             r["metal_melt_country"], in_cots_assembly=o["component_cots"] == "Y")
+        total += q * w
+        bad += q * b
+        magnet = magnet or m
+    return total, bad, magnet
+
+
 def offer_terms(o):
     if o["supply_type"] == "in_house":
         cc = n(o["inhouse_direct_cents"]) + n(o["inhouse_overhead_cents"])
@@ -129,21 +169,17 @@ def offer_terms(o):
     if o["metal_coating_country"] not in ("", "NONE"):
         steps.append(o["metal_coating_country"])
     fis = ist if (ist and not all(ok_country(s) for s in steps)) else 0
-    # specialty metal (weight in grams)
-    smw = n(o["metal_g_per_piece"]) if specialty_metal(o["metal_material"]) else 0
-    bad, magnet_bad = 0, False
-    if smw:
-        form = o["part_form"]
-        excepted = (form == "electronic"
-                    or org in QUALIFYING
-                    or (o["component_cots"] == "Y" and form not in ("mill_product", "forging", "casting", "magnet", "fastener"))
-                    or (form == "fastener" and o["fastener_mfr_dod_certified"] == "Y")
-                    or ok_country(o["metal_melt_country"]))
-        if not excepted:
-            if form == "magnet":
-                magnet_bad = True
-            else:
-                bad = smw
+    if o["part_form"] == "assembly":
+        fis = 0
+        for r in contents.get(o["offer_id"], []):
+            st = [r["metal_melt_country"], r["metal_rolling_country"]] + (
+                [r["metal_coating_country"]] if r["metal_coating_country"] not in ("", "NONE") else [])
+            if n(r["iron_steel_cost_cents"]) and not all(ok_country(x) for x in st):
+                fis += int(r["qty"]) * n(r["iron_steel_cost_cents"])
+        smw, bad, magnet_bad = assembly_metal(o)
+    else:
+        smw, bad, magnet_bad = item_metal(org, o["part_form"], o["component_cots"], o["fastener_mfr_dod_certified"],
+                                          o["metal_material"], n(o["metal_g_per_piece"]), o["metal_melt_country"])
     return dict(outlay=outlay, cc=cc, ev=ev, dom=dom, ist=ist, fis=fis, smw=smw, bad=bad, magnet_bad=magnet_bad)
 
 

@@ -58,6 +58,11 @@ SUPPLIERS = [
     ("SUP-38", "Baoji Titanium Trading Co.", "CN"),
     ("SUP-39", "Delaware Valley Stainless (Chester, PA)", "US"),
     ("SUP-40", "Busan Stainless Sheet Co.", "KR"),
+    ("SUP-50", "Buckeye Motor Works (Lima, OH)", "US"),
+    ("SUP-54", "Great Plains Motion Supply (Wichita, KS)", "US"),
+    ("SUP-51", "Ruhr Antriebe GmbH", "DE"),
+    ("SUP-52", "Taichung Motion Components Co.", "TW"),
+    ("SUP-53", "Wenzhou Lock and Hardware Co.", "CN"),
     ("SUP-22", "Dongguan Everlight Trading Co.", "CN"),
     ("SUP-23", "Penang Industrial Exports Sdn. Bhd.", "MY"),
     ("SUP-24", "Tianjin Hardware Export Corp.", "CN"),
@@ -85,6 +90,7 @@ MATERIALS = [
     ("MAT-4340", "AISI 4340 nickel-chromium-molybdenum steel", "iron", dict(c="0.43", mn="0.80", si="0.35", cr="0.90", mo="0.30", ni="2.00")),
     ("MAT-5160", "AISI 5160 spring steel", "iron", dict(c="0.64", mn="1.00", si="0.35", cr="0.90")),
     ("MAT-304", "AISI 304 stainless steel", "iron", dict(c="0.08", mn="2.00", si="0.75", cr="20.00", ni="10.50")),
+    ("MAT-M19", "M19 non-oriented electrical steel", "iron", dict(c="0.01", mn="0.50", si="3.30", al="0.60")),
     ("MAT-6061", "6061-T6 aluminum alloy", "aluminum", dict(si="0.80", cu="0.40", cr="0.35", mg="1.20", fe="0.70")),
     ("MAT-TI64", "Ti-6Al-4V titanium alloy", "titanium", dict(al="6.75", v="4.50", fe="0.30")),
     ("MAT-SMCO", "Sintered samarium-cobalt (Sm2Co17) magnet alloy", "cobalt", dict(co="52.00", sm="25.50", fe="18.00", cu="6.00", zr="3.00")),
@@ -105,7 +111,7 @@ OCOLS = ["offer_id", "product_id", "slot", "supplier_id", "supply_type", "compon
          "inhouse_direct_cents", "inhouse_overhead_cents", "inhouse_profit_cents", "iron_steel_cost_cents",
          "cots_fastener", "fastener_mfr_dod_certified", "metal_material", "metal_g_per_piece", "metal_ore_origin",
          "metal_melt_country", "metal_rolling_country", "metal_coating_country"]
-STEEL_MATS = {"MAT-A36", "MAT-1018", "MAT-1541", "MAT-1340", "MAT-A572", "MAT-4140", "MAT-4340", "MAT-5160", "MAT-304"}
+STEEL_MATS = {"MAT-M19", "MAT-A36", "MAT-1018", "MAT-1541", "MAT-1340", "MAT-A572", "MAT-4140", "MAT-4340", "MAT-5160", "MAT-304"}
 
 
 class Gen:
@@ -210,6 +216,64 @@ class Gen:
         """first choice (the US baseline) always offered, plus k-1 others."""
         return [choices[0]] + self.rng.sample(choices[1:], k - 1)
 
+    def assembly(self, pid, slot, sup, price, cots, items):
+        """Purchased sub-assembly. items: (desc, qty, origin, form, mat, grams, melt, cost)."""
+        o = self.offer(pid, slot, sup, None, price, "assembly", cots=cots, duty_rate=0.0 if COUNTRY[sup] == "US" else None)
+        inner, ist = [], 0
+        for k, (desc, q, org, form, mat, grams, melt, cost) in enumerate(items, 1):
+            i_ist = cost if mat in STEEL_MATS else 0
+            ist += q * i_ist
+            inner.append(dict(item_no=str(k), description=desc, qty=str(q), item_origin=org, part_form=form,
+                              component_cots="N", metal_material=mat, metal_g_per_piece=str(grams),
+                              metal_melt_country=melt, metal_rolling_country=melt, metal_coating_country="NONE",
+                              iron_steel_cost_cents=str(i_ist), unit_cost_cents=str(cost)))
+        o["iron_steel_cost_cents"] = str(ist)
+        o["_inner"] = inner
+        return o
+
+    def motor_offers(self, pid, slot):
+        R = self.r
+        base = R(4600, 6200)
+        mg, lam, sh = R(50, 90), R(600, 900), R(70, 110)
+        cm, cl, cs, cb = R(1800, 2800), R(500, 800), R(250, 450), R(300, 500)
+
+        def items(mmelt, lmelt, smelt, morg=None, lorg=None, sorg=None):
+            return [("Rotor magnet, SmCo", 1, morg or mmelt, "magnet", "MAT-SMCO", mg, mmelt, cm),
+                    ("Stator lamination stack", 1, lorg or lmelt, "fabricated_part", "MAT-M19", lam, lmelt, cl),
+                    ("Rotor shaft", 1, sorg or smelt, "machined_part", "MAT-304", sh, smelt, cs),
+                    ("End bell pair, cast aluminum", 1, "US", "casting", "MAT-6061", 300, "US", cb)]
+        opts = [
+            ("SUP-50", 1.00, "N", items("JP", "US", "US", lorg="US", sorg="US")),
+            ("SUP-50", 0.88, "N", items("CN", "US", "US")),
+            ("SUP-50", 0.86, "N", items("JP", "KR", "KR")),
+            ("SUP-52", 0.70, "Y", items("CN", "CN", "CN")),
+            ("SUP-54", 0.74, "Y", items("CN", "CN", "CN")),
+            ("SUP-52", 0.76, "Y", items("JP", "CN", "CN")),
+            ("SUP-51", 0.90, "N", items("CN", "CN", "CN")),
+            ("SUP-50", 0.94, "N", items("JP", "US", "KR")),
+        ]
+        pick = [opts[0]] + self.rng.sample(opts[1:], 3)
+        return [self.assembly(pid, slot, sup, int(base * m * self.u(0.97, 1.03)), cots, it) for sup, m, cots, it in pick]
+
+    def lock_offers(self, pid, slot):
+        R = self.r
+        base = R(1500, 2300)
+        fg, pg, sg = R(400, 600), R(60, 100), R(15, 30)
+        cf, cp, cs = R(600, 900), R(200, 320), R(40, 80)
+
+        def items(fmelt, pmelt, smelt, org=None):
+            return [("Lock body, forged", 1, org or fmelt, "forging", "MAT-4140", fg, fmelt, cf),
+                    ("Plunger", 1, org or pmelt, "machined_part", "MAT-4340", pg, pmelt, cp),
+                    ("Detent spring", 1, org or smelt, "machined_part", "MAT-5160", sg, smelt, cs)]
+        opts = [
+            ("SUP-30", 1.00, "N", items("US", "US", "US")),
+            ("SUP-30", 0.82, "N", items("KR", "US", "US", org="US")),
+            ("SUP-53", 0.65, "Y", items("CN", "CN", "CN")),
+            ("SUP-33", 0.80, "N", items("CN", "CN", "CN", org="IT")),
+        ]
+        pick = [opts[0]] + self.rng.sample(opts[1:], 2)
+        return [self.assembly(pid, slot, sup, int(base * m * self.u(0.97, 1.03)), cots, it) for sup, m, cots, it in pick]
+
     def sm_part(self, pid, slot, base, grams, form, choices):
         """choices: list of (supplier, material, melt, roll, mult, cots)."""
         out = []
@@ -276,17 +340,14 @@ class Gen:
                 ("SUP-10", "MAT-5160", "CN", "CN", 0.60, "N")]))
             slot("S4", "Sight bracket and electronics module", 1, self.electronic(pid, "S4", R(6000, 9000), sm_g=R(100, 250)))
             slot("S5", "Bolt set", 1, self.fasteners(pid, "S5", R(250, 500), R(80, 140), "MAT-4140"))
+            slot("S6", "Traverse lock assembly", 1, self.lock_offers(pid, "S6"))
             asm = R(1800, 3200); qty = R(40, 160)
         elif fam == "blower":
             desc = self.rng.choice(["Ventilation blower assembly, 24 V", "NBC filter blower assembly", "Crew compartment fan assembly"])
-            slot("S1", "Rotor magnet set, rare earth", 1, self.sm_part(pid, "S1", R(2800, 4200), R(50, 90), "magnet", [
-                ("SUP-35", "MAT-SMCO", "CN", "CN", 0.62, "N"), ("SUP-36", "MAT-SMCO", "JP", "JP", 1.00, "N"),
-                ("SUP-34", "MAT-SMCO", "CN", "AT", 0.88, "N")]))
+            slot("S1", "Drive motor assembly", 1, self.motor_offers(pid, "S1"))
             slot("S2", "Blower housing, cast stainless", 1, self.sm_part(pid, "S2", R(3500, 5200), R(3200, 4600), "casting", [
                 ("SUP-30", "MAT-304", "US", "US", 1.00, "N"), ("SUP-31", "MAT-304", "KR", "KR", 0.76, "N"),
                 ("SUP-10", "MAT-304", "CN", "CN", 0.64, "Y")]))
-            slot("S3", "Motor shaft, stainless", 1, self.sm_part(pid, "S3", R(500, 800), R(70, 110), "machined_part", [
-                ("SUP-39", "MAT-304", "US", "US", 1.00, "N"), ("SUP-40", "MAT-304", "KR", "KR", 0.64, "N")]))
             slot("S4", "Motor controller board", 1, self.electronic(pid, "S4", R(2400, 3800), broker=self.rng.random() < 0.5, sm_g=R(20, 60)))
             slot("S5", "Fan impeller, glass-filled nylon", 1, self.generic(pid, "S5", R(500, 900), k=3))
             asm = R(1500, 2800); qty = R(60, 240)
@@ -447,7 +508,8 @@ def mini_inst(part):
     by_slot = {}
     for o in part["offers"]:
         by_slot.setdefault((pid, o["slot"]), []).append(o)
-    return dict(params=PARAMS, suppliers={}, products={pid: part["prod"]}, materials=MATS, bom={pid: part["bom"]},
+    subs = {o["offer_id"]: o["_inner"] for o in part["offers"] if "_inner" in o}
+    return dict(params=PARAMS, subs=subs, suppliers={}, products={pid: part["prod"]}, materials=MATS, bom={pid: part["bom"]},
                 offers={}, by_slot=by_slot, imports={},
                 imports_by_product={pid: part["imports"]} if part["imports"] else {})
 
@@ -695,9 +757,18 @@ PLAN = [
     ("mount", "sm_no_elim", tw_import(1.3, 1.9, sup=lambda g: g.rng.choice(["SUP-22", "SUP-24", "SUP-46"]),
                                       bad_share=lambda g: g.u(0.3, 0.8)), wpn),
     ("battery_box", "sm_electronic_restricted", DOMREQ, veh),
+    ("charger", "always_domestic", FORALLOW, None),
+    ("led", "always_domestic", FORALLOW, None),
+    ("timer", "always_domestic", FORALLOW, None),
+    # sub-assemblies
+    ("blower", "sm_top_level_only", DOMREQ, veh),
+    ("mount", "sm_top_level_only", DOMREQ, wpn),
+    ("blower", "sm_cots_assembly_magnet", DOMREQ, veh),
+    ("mount", "sm_cots_assembly_ignored", DOMREQ, wpn),
+    ("blower", "ba_rollup", DOMREQ, veh),
+    ("blower", "ba_rollup", DOMREQ, veh),
 ]
-FILLER = [("shelving", None), ("cabinet", None), ("handtruck", None), ("mat", None), ("brush", None), ("slides", None),
-          ("cots_kit", None), ("cots_steel", None), ("blower", "look"), ("mount", "wpn"), ("hinge", "veh")]
+FILLER = [("blower", "look"), ("hinge", "veh")]
 
 
 def build(seed):
@@ -790,6 +861,11 @@ def write(task_dir, params, parts, suppliers):
              ["offer_id", "product_id", "supplier_id", "country_of_manufacture", "unit_price_cents", "freight_cents",
               "duty_cents", "cost_of_components_cents", "us_qc_component_cost_cents", "iron_steel_cost_cents",
               "non_us_qc_iron_steel_cost_cents", "specialty_metal_g", "noncompliant_specialty_metal_g"])
+        wcsv("subassembly_contents.csv",
+             [dict(assembly_offer_id=o["offer_id"], **r) for p in parts for o in p["offers"] for r in o.get("_inner", [])],
+             ["assembly_offer_id", "item_no", "description", "qty", "item_origin", "part_form", "component_cots",
+              "metal_material", "metal_g_per_piece", "metal_melt_country", "metal_rolling_country",
+              "metal_coating_country", "iron_steel_cost_cents", "unit_cost_cents"])
         wcsv("materials.csv", list(MATS.values()), ["material_id", "name", "base_metal"] + [f"max_{e}" for e in ELEMENTS])
 
 

@@ -70,6 +70,9 @@ class Instance:
         self.slot_offers = {}
         for r in self.offers.values():
             self.slot_offers.setdefault((r["product_id"], r["slot"]), []).append(r["offer_id"])
+        self.contents = {}
+        for r in _rows("subassembly_contents.csv"):
+            self.contents.setdefault(r["assembly_offer_id"], []).append(r)
         self.imports = {r["offer_id"]: r for r in _rows("finished_imports.csv")}
         self.product_imports = {}
         for r in self.imports.values():
@@ -126,19 +129,53 @@ class Instance:
         coat = o["metal_coating_country"]
         return not (_home(o["metal_melt_country"]) and _home(o["metal_rolling_country"]) and (coat == "NONE" or _home(coat)))
 
-    def specialty(self, oid):
-        """(grams of specialty metal, grams noncompliant, noncompliant magnet?) for one piece."""
-        o = self.offers[oid]
-        if not o["metal_material"] or not self._sm[o["metal_material"]]:
+    def _item(self, origin, form, cots, certified, mid, g, melt, inside_cots_assembly):
+        if not mid or not self._sm[mid]:
             return 0, 0, False
-        g = _i(o["metal_g_per_piece"])
-        form = o["part_form"]
-        if (form == "electronic" or o["component_origin"] in QUALIFYING
-                or (o["component_cots"] == "Y" and form not in NOT_COTS_EXCEPTED)
-                or (form == "fastener" and o["fastener_mfr_dod_certified"] == "Y")
-                or _home(o["metal_melt_country"])):
+        excepted = (form == "electronic" or origin in QUALIFYING or _home(melt)
+                    or (form == "fastener" and certified == "Y"))
+        if inside_cots_assembly:
+            # 252.225-7009(c)(2)(i): COTS assemblies cover their mill products, forgings, castings and
+            # fasteners; magnets are covered only inside COTS end items or subsystems
+            excepted = excepted or form != "magnet"
+        elif cots == "Y" and form not in NOT_COTS_EXCEPTED:
+            excepted = True
+        if excepted:
             return g, 0, False
         return (g, 0, True) if form == "magnet" else (g, g, False)
+
+    def specialty(self, oid):
+        """(grams of specialty metal, grams noncompliant, noncompliant magnet?) for one piece, all tiers."""
+        o = self.offers[oid]
+        if o["part_form"] != "assembly":
+            return self._item(o["component_origin"], o["part_form"], o["component_cots"], o["fastener_mfr_dod_certified"],
+                              o["metal_material"], _i(o["metal_g_per_piece"]), o["metal_melt_country"], False)
+        G = B = 0
+        magnet = False
+        made_in_qc = o["component_origin"] in QUALIFYING
+        for r in self.contents.get(oid, []):
+            q = int(r["qty"])
+            g, b, m = self._item(r["item_origin"], r["part_form"], r["component_cots"], "N", r["metal_material"],
+                                 _i(r["metal_g_per_piece"]), r["metal_melt_country"], o["component_cots"] == "Y")
+            G += q * g
+            if not made_in_qc:                 # an item manufactured in a qualifying country is excepted whole
+                B += q * b
+                magnet = magnet or m
+        return G, B, magnet
+
+    def foreign_steel_cost(self, oid):
+        """Iron/steel cost not produced in the US or a qualifying country, for one piece."""
+        o = self.offers[oid]
+        ist = _i(o["iron_steel_cost_cents"])
+        if o["part_form"] != "assembly":
+            return ist if (ist and self.steel_not_home(oid)) else 0
+        f = 0
+        for r in self.contents.get(oid, []):
+            c = r["metal_coating_country"]
+            home = _home(r["metal_melt_country"]) and _home(r["metal_rolling_country"]) and (c in ("NONE", "") or _home(c))
+            if not home:
+                f += int(r["qty"]) * _i(r["iron_steel_cost_cents"])
+        return f
 
     # ---------------- builds ----------------
     def us_metrics(self, pid, choice):
@@ -159,8 +196,7 @@ class Instance:
             if o["cots_fastener"] != "Y":
                 ist = _i(o["iron_steel_cost_cents"])
                 IS += q * ist
-                if ist and self.steel_not_home(oid):
-                    FIS += q * ist
+                FIS += q * self.foreign_steel_cost(oid)
             g, b, mg = self.specialty(oid)
             SG += q * g
             SB += q * b

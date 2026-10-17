@@ -20,9 +20,9 @@ Regenerate the shipped instance (secret seed is the default in `generate.py`):
 Needs `ortools==9.15.6755 scipy==1.18.1 numpy==2.5.3 pytest==9.1.1`.
 
 Rule sources (DoD version): DFARS 252.225-7001 (Basic, FEB 2024), 252.225-7009 (JAN 2023),
-225.7003-1/-2/-3, 225.502(c), 225.106, 225.103, 225.872-1 (pasted from Cornell LII), and the GSA FAR
+225.7003-1/-2/-3, 225.502(c), 225.106, 225.103, 225.872-1 (pasted from Cornell LII), 225.872-3(a) (quoted by the deep review), and the GSA FAR
 DITA files for FAR 25.104 and 25.502(d).
 
-Planted readings: all keys of bacore.SHORTCUTS (32), plus a budget-blind plan. The generator also
+Planted readings: all keys of bacore.SHORTCUTS (35, incl. sub-assembly and set-aside readings), plus a budget-blind plan. The generator also
 rejects any product where the FAR 25.106(b)(2) 55% fallback would change the answer, because its
 interaction with DFARS 225.502(c) is ambiguous.
