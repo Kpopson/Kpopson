@@ -31,9 +31,6 @@ RESTRICTED_USE = {                                    # 225.7003-2(a)(1) and the
     "M1126 Stryker infantry carrier vehicle": True,
     "M2A1 .50 caliber machine gun (crew-served weapon)": True,
     "M240B 7.62 mm machine gun (crew-served weapon)": True,
-    "10K all-terrain lifter, army system (ATLAS forklift)": False,
-    "MB-4 aircraft tow tractor (aircraft ground support equipment)": False,
-    "Commercial 3/4-ton pickup truck, base motor pool (COTS vehicle)": False,
     "Warehouse and facility use": False,
 }
 STEEL_LIMITS = {"mn": Fraction("1.65"), "si": Fraction("0.60"), "cu": Fraction("0.60")}

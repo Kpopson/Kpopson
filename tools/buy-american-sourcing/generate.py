@@ -3,8 +3,9 @@
 usage: python3 generate.py [--seed N] [--out TASKDIR] [--quiet]
 
 50 end products for a small business bidding a DLA solicitation: tactical-vehicle and
-weapon-system spare parts (specialty metals restricted), look-alike parts for forklifts,
-ground support equipment and commercial vehicles (not restricted), and facility supplies.
+weapon-system spare parts (specialty metals restricted), look-alike parts and facility supplies
+(not restricted). Look-alike parts were once tied to forklifts, ground support equipment and COTS
+vehicles; they now use the facility label so coverage never hinges on the automotive item definition.
 Planted products are re-drawn until one specific misreading of DFARS / FAR provably changes
 that product's answer (checked with bacore.Rules).
 """
@@ -705,7 +706,8 @@ def wpn(g):
 
 
 def look(g):
-    return g.rng.choice(LOOKALIKE)
+    g.rng.choice(LOOKALIKE)        # keeps the draw sequence of earlier versions
+    return FACILITY
 
 
 DOMREQ = tw_import(1.05, 1.40)

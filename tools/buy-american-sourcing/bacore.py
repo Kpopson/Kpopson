@@ -37,9 +37,6 @@ RESTRICTED_USE = {
     "M1126 Stryker infantry carrier vehicle": True,
     "M2A1 .50 caliber machine gun (crew-served weapon)": True,
     "M240B 7.62 mm machine gun (crew-served weapon)": True,
-    "10K all-terrain lifter, army system (ATLAS forklift)": False,
-    "MB-4 aircraft tow tractor (aircraft ground support equipment)": False,
-    "Commercial 3/4-ton pickup truck, base motor pool (COTS vehicle)": False,
     "Warehouse and facility use": False,
 }
 
@@ -485,7 +482,7 @@ def to_output(inst, sol):
     lines = []
     for pid in sorted(sol["plan"]):
         b = sol["plan"][pid]
-        lines.append(dict(product_id=pid, admissibility=sol["status"][pid], build=b["build"],
+        lines.append(dict(product_id=pid, admissibility=sol["status"][pid],
                           offers=b.get("offers"), import_offer=b.get("import_offer"),
                           unit_outlay_cents=b["unit_outlay"], cost_of_components_cents=b["cost_of_components"],
                           domestic_component_cost_cents=b["domestic_component_cost"],

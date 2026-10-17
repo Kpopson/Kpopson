@@ -20,7 +20,7 @@ P18,"Industrial floor brush, 18 in",BRM-3774,Warehouse and facility use,169,N,64
 P19,Battery tray and hold-down kit,BBX-3678,M1083A1 FMTV 5-ton cargo truck,66,N,1701
 P20,"Floor scrubber battery charger, 36 V",CHG-9375,Warehouse and facility use,73,N,2896
 P21,"Steel shelving unit, 6 shelf, 48 x 24 x 84 in",SHV-3446,Warehouse and facility use,242,N,3790
-P22,Battery tray and hold-down kit,BBX-7053,MB-4 aircraft tow tractor (aircraft ground support equipment),62,N,1967
+P22,Battery tray and hold-down kit,BBX-7053,Warehouse and facility use,62,N,1967
 P23,"HVAC time clock, 7 day",TMR-6814,Warehouse and facility use,301,N,1663
 P24,"LED troffer, 2 x 4 ft, 40 W",LED-5095,Warehouse and facility use,419,N,1777
 P25,Crew compartment fan assembly,BLW-2800,M1126 Stryker infantry carrier vehicle,188,N,1523
@@ -28,12 +28,12 @@ P26,"Steel wardrobe cabinet, 36 x 24 x 78 in",CAB-6416,Warehouse and facility us
 P27,"Steel shelving unit, 5 shelf, 36 x 18 x 72 in",SHV-8165,Warehouse and facility use,210,N,3179
 P28,"Ventilation blower assembly, 24 V",BLW-4551,M1126 Stryker infantry carrier vehicle,236,N,1943
 P29,"LED troffer, 2 x 4 ft, 40 W",LED-2612,Warehouse and facility use,391,N,1385
-P30,"Ventilation blower assembly, 24 V",BLW-5280,"Commercial 3/4-ton pickup truck, base motor pool (COTS vehicle)",195,N,2128
+P30,"Ventilation blower assembly, 24 V",BLW-5280,Warehouse and facility use,195,N,2128
 P31,Pintle mount assembly,MNT-5608,M2A1 .50 caliber machine gun (crew-served weapon),56,N,2906
 P32,Hatch hinge assembly,HNG-2182,M1151A1 HMMWV armament carrier,221,N,1649
 P33,"Door hinge assembly, armored",HNG-8865,M1126 Stryker infantry carrier vehicle,135,N,1736
 P34,"Programmable process timer, panel mount",TMR-5534,Warehouse and facility use,218,N,2241
-P35,Hatch hinge assembly,HNG-9063,"10K all-terrain lifter, army system (ATLAS forklift)",297,N,1312
+P35,Hatch hinge assembly,HNG-9063,Warehouse and facility use,297,N,1312
 P36,"Programmable process timer, panel mount",TMR-2380,Warehouse and facility use,245,N,2366
 P37,Hatch hinge assembly,HNG-1008,M1083A1 FMTV 5-ton cargo truck,163,N,1382
 P38,"Steel wardrobe cabinet, 36 x 24 x 78 in",CAB-9363,Warehouse and facility use,57,N,5312

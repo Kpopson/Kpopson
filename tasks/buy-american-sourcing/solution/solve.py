@@ -49,7 +49,7 @@ NONAVAILABLE = {
     "cover glass, microscope slide": "Cover glass, microscope slide",
 }
 COVERED = ("truck", "hmmwv", "stryker", "machine gun", "weapon")      # 225.7003-2(a)(1) items
-NOT_COVERED = ("forklift", "lifter", "ground support", "cots vehicle", "commercial", "facility")
+NOT_COVERED = ("facility",)
 
 
 def rows(name):
@@ -341,7 +341,7 @@ def main():
             t = pm.iterms[choice]
             used.add(r["supplier_id"])
             unit = t["cost"]
-            line = dict(product_id=pid, admissibility=status[pid], build="import", offers=None, import_offer=choice,
+            line = dict(product_id=pid, admissibility=status[pid], offers=None, import_offer=choice,
                         unit_outlay_cents=unit, cost_of_components_cents=None, domestic_component_cost_cents=None,
                         iron_steel_cost_cents=None, foreign_iron_steel_cost_cents=None,
                         specialty_metals_restricted=pm.covered, specialty_metal_g=t["smt"] if pm.covered else None,
@@ -360,7 +360,7 @@ def main():
                 FIS += qty * t["fis"]
                 SW += qty * t["smw"]
                 SB += qty * t["bad"]
-            line = dict(product_id=pid, admissibility=status[pid], build="us", offers=choice, import_offer=None,
+            line = dict(product_id=pid, admissibility=status[pid], offers=choice, import_offer=None,
                         unit_outlay_cents=unit, cost_of_components_cents=T, domestic_component_cost_cents=Dm,
                         iron_steel_cost_cents=IS, foreign_iron_steel_cost_cents=FIS,
                         specialty_metals_restricted=pm.covered, specialty_metal_g=SW if pm.covered else None,
