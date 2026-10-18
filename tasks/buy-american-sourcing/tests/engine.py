@@ -118,7 +118,9 @@ class Instance:
         return False
 
     def restricted(self, pid):
-        return RESTRICTED_USE[self.products[pid]["next_higher_assembly"]]
+        use = self.products[pid]["next_higher_assembly"]
+        assert use in RESTRICTED_USE, f"{pid}: next_higher_assembly {use!r} has no coverage entry"
+        return RESTRICTED_USE[use]
 
     # ---------------- pieces ----------------
     def piece(self, oid):
