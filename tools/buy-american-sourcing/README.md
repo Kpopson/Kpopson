@@ -23,8 +23,8 @@ Rule sources (DoD version): DFARS 252.225-7001 (Basic, FEB 2024), 252.225-7009 (
 225.7003-1/-2/-3, 225.502(c), 225.106, 225.103, 225.872-1 (pasted from Cornell LII), 225.872-3(a) (quoted by the deep review), and the GSA FAR
 DITA files for FAR 25.104 and 25.502(d).
 
-Planted readings: all keys of bacore.SHORTCUTS (37, incl. sub-assembly, set-aside, steel carbon range and
-iron-nickel alloy readings), plus a budget-blind plan. The generator also
+Planted readings: all keys of bacore.SHORTCUTS (42, incl. sub-assembly, set-aside, steel carbon range,
+iron-nickel alloy and 225.7018 magnet readings), plus a budget-blind plan. The generator also
 rejects any product where the FAR 25.106(b)(2) 55% fallback would change the answer, because its
 interaction with DFARS 225.502(c) is ambiguous.
 
@@ -32,3 +32,6 @@ The shipped products were planted while the rules still read every iron alloy as
 `generate.py` keeps that reading for planting only, so the seed still reproduces them. Answers, budget and
 calibration use the corrected rules. Mount products then get a glass-sealed sight window (Fe-29Ni-17Co frame:
 below the steel carbon range, but a specialty metal as an iron-nickel alloy) from a separate random stream.
+DFARS 225.7018 (252.225-7052, 2027 rules for the 2029 delivery) is applied on every line and tier: sub-assembly
+items carry `metal_ore_origin`, finished imports carry certified covered-material grams, and planting ignores the
+rule (`mag_ignore` in `PLANT_FLAGS`) so the seed still reproduces the shipped products.

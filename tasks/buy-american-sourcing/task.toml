@@ -24,14 +24,20 @@ for electronic components, COTS items, certified fasteners and items made in a q
 percent minimal content rule by weight that excludes magnets. Purchased sub-assemblies make the two clauses pull \
 apart: Buy American counts a sub-assembly as one component by its own origin, while the specialty metals \
 restriction reaches every tier, excepts a qualifying-country sub-assembly as a whole, and lets a COTS assembly \
-cover its forgings but not its magnets. The domestic and specialty metal shares depend on the sourcing choice \
+cover its forgings but not its magnets. On top of both, DFARS 225.7018 (clause 252.225-7052, listed in the \
+solicitation and above the simplified acquisition threshold) bars samarium-cobalt magnets whose material was mined, \
+refined, separated, melted or produced in a covered country, for 2029 delivery, on every line and at every tier, \
+with no qualifying country or minimal content relief: a German-made motor whose magnet was melted in China, or a \
+Japan-melted magnet made from Chinese samarium, passes the specialty metals clause but not this one. The domestic \
+and specialty metal shares depend on the sourcing choice \
 itself, and the vendor audits couple all products together. The solicitation, vendors, offers, sub-assembly \
 contents and imports are synthetic but shaped like a real defense spares bid: realistic bills of materials, \
 prices, freight and duty, material grades and compositions, mixed component, melt and processing countries, and an \
 approved-vendor list; the regulations applied are the real DFARS and FAR text as amended through 2025."""
 solution_explanation = """The reference solution first evaluates each product on its own, as the contracting \
 officer would under DFARS 225.502(c)(ii): it drops qualifying country end products under 225.872-3(a), removes \
-builds that break the specialty metals restriction (evaluated through every sub-assembly tier), finds the \
+builds that break the specialty metals restriction or the 225.7018 magnet restriction (both evaluated through \
+every sub-assembly tier), finds the \
 lowest evaluated build and the lowest domestic build with small CP-SAT models in exact integer and Fraction \
 arithmetic, applies the 50 percent factor, and classifies the line as \
 domestic required or foreign allowed. It then solves one CP-SAT model over all products that picks one build per \
@@ -41,7 +47,8 @@ verification_explanation = """The verifier reads only its own copy of the inputs
 every product, applies the rules in exact integer arithmetic, recomputes the evaluation outcome of each product, \
 and finds the minimum total outlay with a separate HiGHS selection model. Tests check the schema, that every \
 product has one valid build, that each reported figure matches the recomputed one, that every covered line meets \
-the specialty metals restriction, that each evaluation outcome is right, that no line delivers a non-domestic end \
+the specialty metals restriction, that no line delivers a magnet 225.7018 does not allow, that each evaluation \
+outcome is right, that no line delivers a non-domestic end \
 product it may not, that every vendor used is qualified within the audit \
 budget, that the total is the plan's own total, and that the total equals the minimum. Any optimal plan is accepted."""
 

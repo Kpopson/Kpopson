@@ -93,7 +93,14 @@ def test_line_figures_match_recomputation(builds, lines):
 
 def test_specialty_metals_compliance(builds):
     """Every line for a covered item meets the DFARS specialty metals restriction."""
-    bad = [pid for pid, b in builds.items() if b is not None and not b["acceptable"]]
+    bad = [pid for pid, b in builds.items() if b is not None and not b["sm_ok"]]
+    assert all(b is not None for b in builds.values())
+    assert not bad, bad
+
+
+def test_magnet_restriction(builds):
+    """No line delivers a magnet, at any tier, that DFARS 225.7018 does not allow for a 2029 delivery."""
+    bad = [pid for pid, b in builds.items() if b is not None and not b["magnets_ok"]]
     assert all(b is not None for b in builds.values())
     assert not bad, bad
 

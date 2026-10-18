@@ -221,15 +221,16 @@ class Gen:
         return [choices[0]] + self.rng.sample(choices[1:], k - 1)
 
     def assembly(self, pid, slot, sup, price, cots, items):
-        """Purchased sub-assembly. items: (desc, qty, origin, form, mat, grams, melt, cost)."""
+        """Purchased sub-assembly. items: (desc, qty, origin, form, mat, grams, melt, cost[, ore])."""
         o = self.offer(pid, slot, sup, None, price, "assembly", cots=cots, duty_rate=0.0 if COUNTRY[sup] == "US" else None)
         inner, ist = [], 0
-        for k, (desc, q, org, form, mat, grams, melt, cost) in enumerate(items, 1):
+        for k, (desc, q, org, form, mat, grams, melt, cost, *ore) in enumerate(items, 1):
             i_ist = cost if mat in STEEL_MATS else 0
+            ore = ore[0] if ore else ("US" if melt == "US" else "AU")
             ist += q * i_ist
             inner.append(dict(item_no=str(k), description=desc, qty=str(q), item_origin=org, part_form=form,
                               component_cots="N", metal_material=mat, metal_g_per_piece=str(grams),
-                              metal_melt_country=melt, metal_rolling_country=melt, metal_coating_country="NONE",
+                              metal_ore_origin=ore, metal_melt_country=melt, metal_rolling_country=melt, metal_coating_country="NONE",
                               iron_steel_cost_cents=str(i_ist), unit_cost_cents=str(cost)))
         o["iron_steel_cost_cents"] = str(ist)
         o["_inner"] = inner
@@ -241,20 +242,22 @@ class Gen:
         mg, lam, sh = R(50, 90), R(600, 900), R(70, 110)
         cm, cl, cs, cb = R(1800, 2800), R(500, 800), R(250, 450), R(300, 500)
 
-        def items(mmelt, lmelt, smelt, morg=None, lorg=None, sorg=None):
-            return [("Rotor magnet, SmCo", 1, morg or mmelt, "magnet", "MAT-SMCO", mg, mmelt, cm),
+        def items(mmelt, lmelt, smelt, morg=None, lorg=None, sorg=None, more=None):
+            # samarium and cobalt feedstock: Chinese for China-melted alloy, otherwise as given (default Australian)
+            more = more or ("CN" if mmelt == "CN" else "AU")
+            return [("Rotor magnet, SmCo", 1, morg or mmelt, "magnet", "MAT-SMCO", mg, mmelt, cm, more),
                     ("Stator lamination stack", 1, lorg or lmelt, "fabricated_part", "MAT-M19", lam, lmelt, cl),
                     ("Rotor shaft", 1, sorg or smelt, "machined_part", "MAT-304", sh, smelt, cs),
                     ("End bell pair, cast aluminum", 1, "US", "casting", "MAT-6061", 300, "US", cb)]
         opts = [
             ("SUP-50", 1.00, "N", items("JP", "US", "US", lorg="US", sorg="US")),
             ("SUP-50", 0.88, "N", items("CN", "US", "US")),
-            ("SUP-50", 0.86, "N", items("JP", "KR", "KR")),
+            ("SUP-50", 0.86, "N", items("JP", "KR", "KR", more="CN")),
             ("SUP-52", 0.70, "Y", items("CN", "CN", "CN")),
             ("SUP-54", 0.74, "Y", items("CN", "CN", "CN")),
             ("SUP-52", 0.76, "Y", items("JP", "CN", "CN")),
             ("SUP-51", 0.90, "N", items("CN", "CN", "CN")),
-            ("SUP-50", 0.94, "N", items("JP", "US", "KR")),
+            ("SUP-50", 0.94, "N", items("JP", "US", "KR", more="CN")),
         ]
         pick = [opts[0]] + self.rng.sample(opts[1:], 3)
         return [self.assembly(pid, slot, sup, int(base * m * self.u(0.97, 1.03)), cots, it) for sup, m, cots, it in pick]
@@ -501,10 +504,10 @@ class Gen:
 
 
 # ---------------- product-level checks ----------------
-# The shipped instance was planted while the rules still read every iron alloy as steel. Planting keeps that
-# reading so the seed reproduces the shipped products; the answers (expected.json, budget) and calibrate.py
+# The shipped instance was planted while the rules still read every iron alloy as steel and before the
+# 225.7018 magnet restriction was modelled. Planting keeps that reading so the seed reproduces the shipped products; the answers (expected.json, budget) and calibrate.py
 # use the corrected rules, and every planted reading is re-checked there against the shipped instance.
-PLANT_FLAGS = ("sm_ignore_carbon",)
+PLANT_FLAGS = ("sm_ignore_carbon", "mag_ignore")
 QUAL = set()
 PARAMS = {}
 MATS = {m[0]: dict(material_id=m[0], name=m[1], base_metal=m[2], **{f"max_{e}": m[3].get(e, "0.00") for e in ELEMENTS})
@@ -788,6 +791,8 @@ def build(seed):
         "contracting_agency": "Defense Logistics Agency, Land and Maritime",
         "buy_american_clause": "DFARS 252.225-7001 Buy American and Balance of Payments Program, Basic (FEB 2024)",
         "specialty_metals_clause": "DFARS 252.225-7009 Restriction on Acquisition of Certain Articles Containing Specialty Metals (JAN 2023)",
+        "magnets_clause": "DFARS 252.225-7052 Restriction on the Acquisition of Certain Magnets, Tantalum, and Tungsten (MAY 2024)",
+        "acquisition_exceeds_simplified_acquisition_threshold": True,
         "small_business_set_aside": True,
         "trade_agreements_apply": False,
         "award_basis": "lowest evaluated price",
@@ -842,6 +847,7 @@ def build(seed):
             m += 1
             imp["offer_id"] = f"F{m:03d}"
     add_sight_windows(seed, parts, n)
+    add_magnet_facts(parts)
     used = {o["supplier_id"] for p in parts for o in p["offers"]} | {x["supplier_id"] for p in parts for x in p["imports"]}
     suppliers = [dict(supplier_id=sid, name=name, country=c, qualified="Y" if sid in QUAL else "N",
                       qualification_fee_cents=str(fees.get(sid, 0))) for sid, name, c in SUPPLIERS if sid in used]
@@ -869,6 +875,17 @@ def add_sight_windows(seed, parts, n):
         part["offers"].extend(offs)
 
 
+def add_magnet_facts(parts):
+    """Maker-certified 225.7018 covered material in finished imports: the rotor magnet of a blower's motor.
+    Units made in China, Vietnam, Malaysia or Japan use Chinese samarium feedstock. Deterministic."""
+    for part in parts:
+        inner = [r for o in part["offers"] for r in o.get("_inner", []) if r["part_form"] == "magnet"]
+        mg = int(inner[0]["metal_g_per_piece"]) if inner else 0
+        for x in part["imports"]:
+            x["covered_material_g"] = str(mg)
+            x["noncompliant_covered_material_g"] = str(mg if mg and x["country_of_manufacture"] in ("CN", "VN", "MY", "JP") else 0)
+
+
 def write(task_dir, params, parts, suppliers):
     for sub in ("environment/data", "tests/data"):
         d = os.path.join(task_dir, sub)
@@ -891,11 +908,12 @@ def write(task_dir, params, parts, suppliers):
         wcsv("finished_imports.csv", [x for p in parts for x in p["imports"]],
              ["offer_id", "product_id", "supplier_id", "country_of_manufacture", "unit_price_cents", "freight_cents",
               "duty_cents", "cost_of_components_cents", "us_qc_component_cost_cents", "iron_steel_cost_cents",
-              "non_us_qc_iron_steel_cost_cents", "specialty_metal_g", "noncompliant_specialty_metal_g"])
+              "non_us_qc_iron_steel_cost_cents", "specialty_metal_g", "noncompliant_specialty_metal_g",
+              "covered_material_g", "noncompliant_covered_material_g"])
         wcsv("subassembly_contents.csv",
              [dict(assembly_offer_id=o["offer_id"], **r) for p in parts for o in p["offers"] for r in o.get("_inner", [])],
              ["assembly_offer_id", "item_no", "description", "qty", "item_origin", "part_form", "component_cots",
-              "metal_material", "metal_g_per_piece", "metal_melt_country", "metal_rolling_country",
+              "metal_material", "metal_g_per_piece", "metal_ore_origin", "metal_melt_country", "metal_rolling_country",
               "metal_coating_country", "iron_steel_cost_cents", "unit_cost_cents"])
         wcsv("materials.csv", list(MATS.values()), ["material_id", "name", "base_metal"] + [f"max_{e}" for e in ELEMENTS])
 

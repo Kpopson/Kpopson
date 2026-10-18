@@ -1,5 +1,5 @@
 {
-  "total_outlay_cents": 104764177,
+  "total_outlay_cents": 105433469,
   "admissibility": {
     "P01": "domestic_required",
     "P02": "foreign_allowed",
@@ -52,6 +52,6 @@
     "P49": "domestic_required",
     "P50": "domestic_required"
   },
-  "unbudgeted_total_outlay_cents": 104070017,
+  "unbudgeted_total_outlay_cents": 104739309,
   "unbudgeted_spend_cents": 470000
 }

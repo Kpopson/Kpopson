@@ -22,6 +22,7 @@ from scipy.optimize import Bounds, LinearConstraint, milp
 QC = {"AU", "AT", "BE", "CA", "CZ", "DK", "EG", "EE", "FI", "FR", "DE", "GR", "IL", "IT", "JP", "LV",
       "LT", "LU", "NL", "NO", "PL", "PT", "SI", "ES", "SE", "CH", "TR", "GB"}
 CASE_BY_CASE = {"AT"}  # 225.872-1(b): Austria only purchase-by-purchase
+COVERED_NATIONS = {"KP", "CN", "RU", "IR"}  # 225.7018-1 covered countries
 
 LISTED_CLASSES = {
     "hog bristles": "Hog bristles for brushes",
@@ -69,6 +70,11 @@ SHORTCUTS = {
     "sm_mn_ignore": "ignores the manganese limit when classifying steel",
     "sm_ignore_carbon": "classifies an iron alloy below 0.02% carbon (electrical steel) as steel",
     "sm_no_iron_nickel": "classifies iron-base alloys only as steel, missing iron-nickel alloys",
+    "mag_ignore": "ignores the 225.7018 magnet, tantalum and tungsten restriction",
+    "mag_restricted_only": "applies 225.7018 only to items covered by the specialty metals restriction",
+    "mag_melt_only": "applies the pre-2027 225.7018 rule (melt and production only, not mining or refining)",
+    "mag_qc_exception": "lets a qualifying country item or sub-assembly escape 225.7018 as under 252.225-7009",
+    "mag_2pct": "allows 225.7018 covered material up to the 2 percent specialty metals minimal content",
     "sm_all_processes": "requires rolling and coating, not just melting, in the US or a qualifying country",
     "sm_no_qc_mfg": "ignores the exception for items manufactured in a qualifying country",
     "sm_cost_basis": "measures the 2% minimal content by cost instead of weight",
@@ -146,6 +152,8 @@ class Rules:
         self.case_by_case -= {c for c in p.get("public_interest_determinations", [])}
         self._sm_cache = {}
         self.setaside = bool(p.get("small_business_set_aside")) and "qc_considered" not in self.f
+        # 225.7018-3(a): the restriction does not apply at or below the simplified acquisition threshold
+        self.mag_on = bool(p.get("acquisition_exceeds_simplified_acquisition_threshold")) and "mag_ignore" not in self.f
 
     def ok_country(self, c):
         return c == "US" or c in self.qc
@@ -187,6 +195,37 @@ class Rules:
             r = False
         self._sm_cache[mid] = r
         return r
+
+    def is_covered_mat(self, mid):
+        """225.7018 covered material present in data: samarium-cobalt or neodymium-iron-boron magnet alloy."""
+        m = self.inst["materials"].get(mid) if mid else None
+        if not m:
+            return False
+        el = {k[4:]: _dec(v) for k, v in m.items() if k.startswith("max_")}
+        return (el.get("sm", 0) > 0 and el.get("co", 0) > 0) or (el.get("nd", 0) > 0 and el.get("b", 0) > 0)
+
+    def mag_bad_item(self, mid, form, ore, melt, made, w, qc_parent=False):
+        """Grams of covered material mined, refined, separated, melted or produced in a covered country."""
+        if not self.mag_on or not self.is_covered_mat(mid) or form == "electronic":
+            return 0
+        if "mag_qc_exception" in self.f and (made in QC or qc_parent):
+            return 0
+        places = {melt, made} if "mag_melt_only" in self.f else {ore, melt, made}
+        return w if places & COVERED_NATIONS else 0
+
+    def mag_piece(self, o):
+        if o["part_form"] != "assembly":
+            return self.mag_bad_item(o["metal_material"], o["part_form"], o["metal_ore_origin"], o["metal_melt_country"],
+                                     o["component_origin"], _int(o["metal_g_per_piece"]))
+        qcp = o["component_origin"] in QC
+        return sum(int(r["qty"]) * self.mag_bad_item(r["metal_material"], r["part_form"], r.get("metal_ore_origin", ""),
+                                                      r["metal_melt_country"], r["item_origin"], _int(r["metal_g_per_piece"]), qcp)
+                   for r in self.inst["subs"].get(o["offer_id"], []))
+
+    def mag_ok(self, rest, bad, sm_total):
+        if bad == 0 or ("mag_restricted_only" in self.f and not rest):
+            return True
+        return "mag_2pct" in self.f and 100 * bad <= 2 * sm_total
 
     def restricted(self, pid):
         if "sm_ignore" in self.f:
@@ -312,7 +351,7 @@ class Rules:
     # ---------------- builds ----------------
     def us_build(self, pid, choice):
         prod = self.inst["products"][pid]
-        outlay = ev = T = Dm = IS = FIS = SMT = SMB = 0
+        outlay = ev = T = Dm = IS = FIS = SMT = SMB = MAGB = 0
         mag = False
         sup = set()
         for b in self.inst["bom"][pid]:
@@ -338,6 +377,7 @@ class Rules:
             SMT += q * w
             SMB += q * bad
             mag = mag or m
+            MAGB += q * self.mag_piece(o)
             sup.add(o["supplier_id"])
         asm = int(prod["assembly_cost_cents"])
         outlay += asm
@@ -362,7 +402,7 @@ class Rules:
                     unit_eval=ev, cost_of_components=T, domestic_component_cost=Dm, iron_steel_cost=IS,
                     foreign_iron_steel_cost=FIS, track=track, domestic=track != "foreign", exempt=False,
                     restricted=rest, sm_total=SMT if rest else None, sm_bad=SMB if rest else None,
-                    sm_ok=(not rest) or self.sm_ok(SMT, SMB, mag), suppliers=sup)
+                    sm_ok=((not rest) or self.sm_ok(SMT, SMB, mag)) and self.mag_ok(rest, MAGB, SMT), suppliers=sup)
 
     def import_build(self, r):
         pid = r["product_id"]
@@ -381,12 +421,17 @@ class Rules:
         smt, smb = _int(r["specialty_metal_g"]), _int(r["noncompliant_specialty_metal_g"])
         if country in QC and "sm_no_qc_mfg" not in self.f:
             smb = 0
+        cg, ncg = _int(r.get("covered_material_g", "")), _int(r.get("noncompliant_covered_material_g", ""))
+        magb = 0
+        if self.mag_on and not ("mag_qc_exception" in self.f and country in QC):
+            magb = cg if country in COVERED_NATIONS else ncg   # an end item made in a covered country
         return dict(build="import", considered=not (self.setaside and qcep),
                     fallback_ok=False, dc_le55=100 * UQ <= 55 * T, import_offer=r["offer_id"], unit_outlay=c, unit_eval=c,
                     cost_of_components=None, domestic_component_cost=None, iron_steel_cost=None,
                     foreign_iron_steel_cost=None, track="foreign",
                     domestic=False, exempt=exempt, restricted=rest, sm_total=smt if rest else None,
-                    sm_bad=smb if rest else None, sm_ok=(not rest) or self.sm_ok(smt, smb, False),
+                    sm_bad=smb if rest else None,
+                    sm_ok=((not rest) or self.sm_ok(smt, smb, False)) and self.mag_ok(rest, magb, smt),
                     suppliers={r["supplier_id"]})
 
     def builds(self, pid):

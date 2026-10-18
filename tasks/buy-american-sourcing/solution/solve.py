@@ -26,6 +26,10 @@ Rules applied:
     alloying metals; titanium and zirconium.
   * DFARS 225.872-3(a): in a small business set-aside, offers of qualifying country end products are not
     considered at all.
+  * DFARS 225.7018 / 252.225-7052 (above the simplified acquisition threshold, every product, every tier):
+    for 2027 and later deliveries no samarium-cobalt or neodymium-iron-boron magnet whose material was
+    mined, refined, separated, melted or produced in a covered country (North Korea, China, Russia, Iran),
+    and no end item made in a covered country that contains one. No qualifying country or 2% relief.
   * DFARS 225.502(c)(ii) with the 225.106 50% factor: builds that break the specialty metals rule are not
     acceptable offers; a qualifying country end product (not Austria, which needs a case determination;
     iron/steel ones must also meet the steel test) is exempt from the factor; ties go to domestic.
@@ -51,6 +55,7 @@ NONAVAILABLE = {
     "cover glass, microscope slide": "Cover glass, microscope slide",
 }
 COVERED = ("truck", "hmmwv", "stryker", "machine gun", "weapon")      # 225.7003-2(a)(1) items
+COVERED_NATIONS = {"KP", "CN", "RU", "IR"}                            # 225.7018-1
 NOT_COVERED = ("facility",)
 
 
@@ -71,6 +76,7 @@ AVAILABLE = set(params.get("nonavailable_articles_available_domestically", []))
 EXEMPT_OK = lambda c: c in QUALIFYING and (c not in CASE_BY_CASE or c in params.get("public_interest_determinations", []))
 BUDGET = int(params["qualification_budget_cents"])
 SET_ASIDE = bool(params.get("small_business_set_aside"))
+MAGNET_RULE = bool(params.get("acquisition_exceeds_simplified_acquisition_threshold"))   # 225.7018-3(a)
 
 suppliers = {r["supplier_id"]: r for r in rows("suppliers.csv")}
 products = {r["product_id"]: r for r in rows("products.csv")}
@@ -127,6 +133,20 @@ def covered(pid):
     if any(k in use for k in NOT_COVERED):
         return False
     return any(k in use for k in COVERED)
+
+
+def covered_material(mid):
+    """225.7018 covered material in the data: samarium-cobalt or neodymium-iron-boron magnet alloy."""
+    if not mid:
+        return False
+    el = {k[4:]: Fraction(v) for k, v in materials[mid].items() if k.startswith("max_") and v}
+    return (el.get("sm", 0) > 0 and el.get("co", 0) > 0) or (el.get("nd", 0) > 0 and el.get("b", 0) > 0)
+
+
+def covered_bad(mid, form, ore, melt, made):
+    """225.7018-2 for 2027 and later deliveries: covered material mined, refined, separated, melted or produced
+    in a covered country, at any tier; no qualifying country or minimal content relief."""
+    return MAGNET_RULE and covered_material(mid) and form != "electronic" and bool({ore, melt, made} & COVERED_NATIONS)
 
 
 def item_metal(origin, form, cots, certified, mid, grams, melt, in_cots_assembly=False):
@@ -191,10 +211,14 @@ def offer_terms(o):
             if n(r["iron_steel_cost_cents"]) and not all(ok_country(x) for x in st):
                 fis += int(r["qty"]) * n(r["iron_steel_cost_cents"])
         smw, bad, magnet_bad = assembly_metal(o)
+        mag_bad = any(covered_bad(r["metal_material"], r["part_form"], r["metal_ore_origin"], r["metal_melt_country"],
+                                 r["item_origin"]) for r in contents.get(o["offer_id"], []))
     else:
         smw, bad, magnet_bad = item_metal(org, o["part_form"], o["component_cots"], o["fastener_mfr_dod_certified"],
                                           o["metal_material"], n(o["metal_g_per_piece"]), o["metal_melt_country"])
-    return dict(outlay=outlay, cc=cc, ev=ev, dom=dom, ist=ist, fis=fis, smw=smw, bad=bad, magnet_bad=magnet_bad)
+        mag_bad = covered_bad(o["metal_material"], o["part_form"], o["metal_ore_origin"], o["metal_melt_country"], org)
+    return dict(outlay=outlay, cc=cc, ev=ev, dom=dom, ist=ist, fis=fis, smw=smw, bad=bad, magnet_bad=magnet_bad,
+                mag_bad=mag_bad)
 
 
 TERMS = {o["offer_id"]: offer_terms(o) for lst in offers.values() for o in lst}
@@ -213,7 +237,9 @@ def import_terms(pid, r):
         smb = 0
     sm_ok = (not covered(pid)) or Fraction(smb) <= Fraction(smt) * Fraction(2, 100)
     considered = not (SET_ASIDE and qcep)          # 225.872-3(a)
-    return dict(cost=cost, qcep=qcep, exempt=exempt and considered, smt=smt, smb=smb, sm_ok=sm_ok,
+    cg, ncg = n(r["covered_material_g"]), n(r["noncompliant_covered_material_g"])
+    mag_ok = not MAGNET_RULE or (ncg == 0 and not (country in COVERED_NATIONS and cg > 0))   # 225.7018-2
+    return dict(cost=cost, qcep=qcep, exempt=exempt and considered, smt=smt, smb=smb, sm_ok=sm_ok and mag_ok,
                 considered=considered)
 
 
@@ -244,7 +270,7 @@ class ProductModel:
                 EV.append(q * t["ev"] * v)
                 SMW.append(q * t["smw"] * v)
                 SMB.append(q * t["bad"] * v)
-                if self.covered and t["magnet_bad"]:
+                if (self.covered and t["magnet_bad"]) or t["mag_bad"]:
                     m.Add(v == 0)
             m.Add(sum(row) == self.us)
         asm = int(products[pid]["assembly_cost_cents"])

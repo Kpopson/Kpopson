@@ -15,7 +15,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import bacore  # noqa: E402
 
-CORE = {"test_admissibility_matches_dfars_evaluation", "test_every_line_is_deliverable",
+CORE = {"test_admissibility_matches_dfars_evaluation", "test_every_line_is_deliverable", "test_magnet_restriction",
         "test_specialty_metals_compliance", "test_suppliers_qualified_within_budget", "test_total_outlay_is_minimum"}
 
 

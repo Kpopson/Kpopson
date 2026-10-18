@@ -3,6 +3,8 @@
   "contracting_agency": "Defense Logistics Agency, Land and Maritime",
   "buy_american_clause": "DFARS 252.225-7001 Buy American and Balance of Payments Program, Basic (FEB 2024)",
   "specialty_metals_clause": "DFARS 252.225-7009 Restriction on Acquisition of Certain Articles Containing Specialty Metals (JAN 2023)",
+  "magnets_clause": "DFARS 252.225-7052 Restriction on the Acquisition of Certain Magnets, Tantalum, and Tungsten (MAY 2024)",
+  "acquisition_exceeds_simplified_acquisition_threshold": true,
   "small_business_set_aside": true,
   "trade_agreements_apply": false,
   "award_basis": "lowest evaluated price",

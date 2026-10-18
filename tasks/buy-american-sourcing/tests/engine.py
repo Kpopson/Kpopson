@@ -37,6 +37,7 @@ STEEL_CARBON = (Fraction("0.02"), Fraction(2))     # 252.225-7009(a) definition 
 STEEL_LIMITS = {"mn": Fraction("1.65"), "si": Fraction("0.60"), "cu": Fraction("0.60")}
 STEEL_ELEMENTS = ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v")
 NONMETALS = frozenset({"c", "si"})
+COVERED_NATIONS = frozenset({"KP", "CN", "RU", "IR"})    # 225.7018-1 covered countries
 NOT_COTS_EXCEPTED = frozenset({"mill_product", "forging", "casting", "magnet", "fastener"})
 
 TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "foreign")
@@ -82,6 +83,8 @@ class Instance:
         self.determinations = set(self.params.get("public_interest_determinations", []))
         self.budget = int(self.params["qualification_budget_cents"])
         self.set_aside = bool(self.params.get("small_business_set_aside"))
+        # 225.7018-3(a): no magnet restriction at or below the simplified acquisition threshold
+        self.magnet_rule = bool(self.params.get("acquisition_exceeds_simplified_acquisition_threshold"))
         self._status = {}
         self._sm = {mid: self._is_specialty(m) for mid, m in self.materials.items()}
 
@@ -175,6 +178,29 @@ class Instance:
                 magnet = magnet or m
         return G, B, magnet
 
+    def _covered(self, mid):
+        """225.7018 covered material in the data: samarium-cobalt or neodymium-iron-boron magnet alloy."""
+        m = self.materials.get(mid) if mid else None
+        if not m:
+            return False
+        pct = {k[4:]: Fraction(v) for k, v in m.items() if k.startswith("max_") and v}
+        return (pct.get("sm", 0) > 0 and pct.get("co", 0) > 0) or (pct.get("nd", 0) > 0 and pct.get("b", 0) > 0)
+
+    def magnets_ok(self, oid):
+        """225.7018-2 for deliveries from 2027, at every tier: no covered material mined, refined, separated,
+        melted or produced in a covered country. No qualifying country or minimal content exception."""
+        if not self.magnet_rule:
+            return True
+        o = self.offers[oid]
+        if o["part_form"] != "assembly":
+            rows = [(o["metal_material"], o["part_form"], o["metal_ore_origin"], o["metal_melt_country"],
+                     o["component_origin"])]
+        else:
+            rows = [(r["metal_material"], r["part_form"], r["metal_ore_origin"], r["metal_melt_country"],
+                     r["item_origin"]) for r in self.contents.get(oid, [])]
+        return not any(self._covered(mid) and form != "electronic" and {ore, melt, made} & COVERED_NATIONS
+                       for mid, form, ore, melt, made in rows)
+
     def foreign_steel_cost(self, oid):
         """Iron/steel cost not produced in the US or a qualifying country, for one piece."""
         o = self.offers[oid]
@@ -195,6 +221,7 @@ class Instance:
         outlay = ev = int(prod["assembly_cost_cents"])
         T = Dm = IS = FIS = SG = SB = 0
         magnet = False
+        mag_ok = True
         sup = set()
         for slot, q in self.slots[pid]:
             oid = choice[slot]
@@ -213,6 +240,7 @@ class Instance:
             SG += q * g
             SB += q * b
             magnet = magnet or mg
+            mag_ok = mag_ok and self.magnets_ok(oid)
             sup.add(o["supplier_id"])
         if 2 * IS > T:
             track = "domestic_iron_steel" if 100 * FIS < 5 * T else "foreign"
@@ -221,11 +249,12 @@ class Instance:
         else:
             track = "domestic_component_test" if 100 * Dm > self.threshold * T else "foreign"
         rest = self.restricted(pid)
+        sm_ok = (not rest) or (not magnet and 100 * SB <= 2 * SG)
         return dict(build="us", choice=dict(choice), unit_outlay=outlay, unit_eval=ev, cost_of_components=T,
                     domestic_component_cost=Dm, iron_steel_cost=IS, foreign_iron_steel_cost=FIS, track=track,
                     domestic=track.startswith("domestic"), exempt=False, restricted=rest,
                     specialty_metal_g=SG if rest else None, noncompliant_specialty_metal_g=SB if rest else None,
-                    acceptable=(not rest) or (not magnet and 100 * SB <= 2 * SG), suppliers=sup)
+                    sm_ok=sm_ok, magnets_ok=mag_ok, acceptable=sm_ok and mag_ok, suppliers=sup)
 
     def import_metrics(self, iid):
         r = self.imports[iid]
@@ -243,13 +272,17 @@ class Instance:
             SB = 0
         # 225.872-3(a): a qualifying country end product is not considered in a small business set-aside
         considered = not (self.set_aside and qcep)
+        sm_ok = (not rest) or 100 * SB <= 2 * SG
+        CG, NCG = _i(r["covered_material_g"]), _i(r["noncompliant_covered_material_g"])
+        # 225.7018-2: nor an end item made in a covered country that contains covered material
+        mag_ok = not self.magnet_rule or (NCG == 0 and not (country in COVERED_NATIONS and CG > 0))
         return dict(build="import", import_offer=iid, considered=considered, unit_outlay=c, unit_eval=c,
                     cost_of_components=None,
                     domestic_component_cost=None, iron_steel_cost=None, foreign_iron_steel_cost=None,
                     track="foreign", domestic=False, exempt=exempt,
                     restricted=rest, specialty_metal_g=SG if rest else None,
                     noncompliant_specialty_metal_g=SB if rest else None,
-                    acceptable=(not rest) or 100 * SB <= 2 * SG, suppliers={r["supplier_id"]})
+                    sm_ok=sm_ok, magnets_ok=mag_ok, acceptable=sm_ok and mag_ok, suppliers={r["supplier_id"]})
 
     def all_builds(self, pid):
         names = [s for s, _ in self.slots[pid]]
