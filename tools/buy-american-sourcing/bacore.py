@@ -67,6 +67,8 @@ SHORTCUTS = {
     "sm_nonstrict_comp": "classifies steel at exactly the limit as specialty metal",
     "sm_hsla": "treats microalloyed HSLA steel as specialty metal",
     "sm_mn_ignore": "ignores the manganese limit when classifying steel",
+    "sm_ignore_carbon": "classifies an iron alloy below 0.02% carbon (electrical steel) as steel",
+    "sm_no_iron_nickel": "classifies iron-base alloys only as steel, missing iron-nickel alloys",
     "sm_all_processes": "requires rolling and coating, not just melting, in the US or a qualifying country",
     "sm_no_qc_mfg": "ignores the exception for items manufactured in a qualifying country",
     "sm_cost_basis": "measures the 2% minimal content by cost instead of weight",
@@ -158,20 +160,29 @@ class Rules:
         base = m["base_metal"]
         el = {k[4:]: _dec(v) for k, v in m.items() if k.startswith("max_")}
         gt = (lambda a, b: a >= b) if "sm_nonstrict_comp" in self.f else (lambda a, b: a > b)
+        metals = lambda skip: sum(v for e, v in el.items() if e not in skip and e not in ("c", "si"))
         if base == "iron":
+            # 252.225-7009(a): steel is an iron alloy with 0.02 to 2 percent carbon
+            steel = "sm_ignore_carbon" in self.f or Fraction("0.02") <= el.get("c", 0) <= 2
             if "sm_hsla" in self.f and (el.get("nb", 0) > 0 or el.get("v", 0) > 0):
-                r = True
+                r = steel
             else:
                 lim = [("si", Fraction("0.60")), ("cu", Fraction("0.60"))]
                 if "sm_mn_ignore" not in self.f:
                     lim.append(("mn", Fraction("1.65")))
-                r = any(gt(el.get(e, 0), v) for e, v in lim) or any(
-                    gt(el.get(e, 0), Fraction("0.25")) for e in ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v"))
+                r = steel and (any(gt(el.get(e, 0), v) for e, v in lim) or any(
+                    gt(el.get(e, 0), Fraction("0.25")) for e in ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v")))
+            if not r and "sm_no_iron_nickel" not in self.f:
+                # iron-nickel alloy (225.7003-1): iron (balance) and nickel the two predominant elements, >= 50% together
+                rest = [v for e, v in el.items() if e not in ("fe", "ni")]
+                ni = el.get("ni", 0)
+                fe = 100 - sum(rest) - ni
+                if min(fe, ni) > max(rest, default=0) and fe + ni >= 50:
+                    r = gt(metals(("ni", "fe")), 10)
         elif base in ("titanium", "zirconium"):
             r = True
         elif base in ("nickel", "cobalt"):
-            other = sum(v for e, v in el.items() if e not in (("ni", "fe") if base == "nickel" else ("co", "fe")))
-            r = other > 10
+            r = metals(("ni", "fe") if base == "nickel" else ("co", "fe")) > 10
         else:
             r = False
         self._sm_cache[mid] = r

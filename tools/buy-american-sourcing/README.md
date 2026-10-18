@@ -5,7 +5,7 @@ uploaded with the task: they contain the generator and the secret seed.
 
 | file | what it does |
 |------|--------------|
-| `bacore.py` | Rules engine (FAR 25.101, 25.106, 25.502, 52.225-1 Oct 2022) with shortcut flags for wrong readings |
+| `bacore.py` | Rules engine (DFARS 252.225-7001, 252.225-7009, Part 225; FAR Part 25) with shortcut flags for wrong readings |
 | `generate.py` | Seeded generator. Writes identical inputs to `environment/data` and `tests/data`, and `tests/expected.json` |
 | `quickcal.py` | Whole-instance effect of each shortcut (illegal lines, outlay change) |
 | `calibrate.py` | Grades each shortcut's optimal plan with the real tests. Every shortcut must fail a core test |
@@ -23,6 +23,12 @@ Rule sources (DoD version): DFARS 252.225-7001 (Basic, FEB 2024), 252.225-7009 (
 225.7003-1/-2/-3, 225.502(c), 225.106, 225.103, 225.872-1 (pasted from Cornell LII), 225.872-3(a) (quoted by the deep review), and the GSA FAR
 DITA files for FAR 25.104 and 25.502(d).
 
-Planted readings: all keys of bacore.SHORTCUTS (35, incl. sub-assembly and set-aside readings), plus a budget-blind plan. The generator also
+Planted readings: all keys of bacore.SHORTCUTS (37, incl. sub-assembly, set-aside, steel carbon range and
+iron-nickel alloy readings), plus a budget-blind plan. The generator also
 rejects any product where the FAR 25.106(b)(2) 55% fallback would change the answer, because its
 interaction with DFARS 225.502(c) is ambiguous.
+
+The shipped products were planted while the rules still read every iron alloy as steel; `PLANT_FLAGS` in
+`generate.py` keeps that reading for planting only, so the seed still reproduces them. Answers, budget and
+calibration use the corrected rules. Mount products then get a glass-sealed sight window (Fe-29Ni-17Co frame:
+below the steel carbon range, but a specialty metal as an iron-nickel alloy) from a separate random stream.

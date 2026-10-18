@@ -5,6 +5,7 @@ P01,S3,Spring,2
 P01,S4,Sight bracket and electronics module,1
 P01,S5,Bolt set,1
 P01,S6,Traverse lock assembly,1
+P01,S7,"Sight window, glass-sealed frame",1
 P02,S1,Power transformer,1
 P02,S2,Control board,1
 P02,S3,"Cabinet, aluminum sheet",1
@@ -39,6 +40,7 @@ P08,S3,Spring,2
 P08,S4,Sight bracket and electronics module,1
 P08,S5,Bolt set,1
 P08,S6,Traverse lock assembly,1
+P08,S7,"Sight window, glass-sealed frame",1
 P09,S1,"Box shell, formed sheet",1
 P09,S2,"Hold-down rod, threaded",2
 P09,S3,"Fastener kit, stainless",1
@@ -147,6 +149,7 @@ P31,S3,Spring,2
 P31,S4,Sight bracket and electronics module,1
 P31,S5,Bolt set,1
 P31,S6,Traverse lock assembly,1
+P31,S7,"Sight window, glass-sealed frame",1
 P32,S1,"Hinge leaf, forged",2
 P32,S2,Hinge pin,1
 P32,S3,"Bushing, bronze",2
@@ -210,6 +213,7 @@ P44,S3,Spring,2
 P44,S4,Sight bracket and electronics module,1
 P44,S5,Bolt set,1
 P44,S6,Traverse lock assembly,1
+P44,S7,"Sight window, glass-sealed frame",1
 P45,S1,Printed circuit board assembly,1
 P45,S2,"Quartz crystal, 32.768 kHz",1
 P45,S3,"Enclosure, molded polycarbonate",1
@@ -232,6 +236,7 @@ P48,S3,Spring,2
 P48,S4,Sight bracket and electronics module,1
 P48,S5,Bolt set,1
 P48,S6,Traverse lock assembly,1
+P48,S7,"Sight window, glass-sealed frame",1
 P49,S1,"Box shell, formed sheet",1
 P49,S2,"Hold-down rod, threaded",2
 P49,S3,"Fastener kit, stainless",1

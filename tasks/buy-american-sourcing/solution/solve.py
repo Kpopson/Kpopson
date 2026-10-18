@@ -20,8 +20,10 @@ Rules applied:
     castings, mill products, fasteners and parts are excepted but magnets are not (only COTS end items
     and subsystems cover magnets). For Buy American a sub-assembly is one component: only its own
     origin matters.
-    Specialty metal: steel above 1.65 Mn / 0.60 Si / 0.60 Cu or above 0.25 of Al, Cr, Co, Mo, Ni, Nb, Ti,
-    W, V; nickel or cobalt alloys with more than 10% other alloying metals; titanium and zirconium.
+    Specialty metal: steel (an iron alloy with 0.02 to 2 percent carbon) above 1.65 Mn / 0.60 Si / 0.60 Cu
+    or above 0.25 of Al, Cr, Co, Mo, Ni, Nb, Ti, W, V; nickel or iron-nickel alloys (iron and nickel the two
+    predominant elements, 50% or more together, 225.7003-1) and cobalt alloys with more than 10% other
+    alloying metals; titanium and zirconium.
   * DFARS 225.872-3(a): in a small business set-aside, offers of qualifying country end products are not
     considered at all.
   * DFARS 225.502(c)(ii) with the 225.106 50% factor: builds that break the specialty metals rule are not
@@ -97,14 +99,26 @@ def specialty_metal(mid):
     m = materials[mid]
     el = {k[4:]: Fraction(v) for k, v in m.items() if k.startswith("max_") and v}
     base = m["base_metal"]
+
+    def alloying_metals(keep):
+        return sum(v for e, v in el.items() if e not in keep and e not in ("c", "si"))
     if base == "iron":
-        return (el.get("mn", 0) > Fraction("1.65") or el.get("si", 0) > Fraction("0.60") or el.get("cu", 0) > Fraction("0.60")
-                or any(el.get(e, 0) > Fraction("0.25") for e in ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v")))
+        steel = Fraction("0.02") <= el.get("c", 0) <= 2    # steel is an iron alloy with 0.02 to 2 percent carbon
+        if steel and (el.get("mn", 0) > Fraction("1.65") or el.get("si", 0) > Fraction("0.60")
+                      or el.get("cu", 0) > Fraction("0.60")
+                      or any(el.get(e, 0) > Fraction("0.25") for e in ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v"))):
+            return True
+        # an iron-nickel alloy has iron (the balance) and nickel as its two largest elements, 50% or more together
+        others = [v for e, v in el.items() if e not in ("fe", "ni")]
+        ni = el.get("ni", 0)
+        fe = 100 - sum(others) - ni
+        if fe > max(others, default=0) and ni > max(others, default=0) and fe + ni >= 50:
+            return alloying_metals(("ni", "fe")) > 10
+        return False
     if base in ("titanium", "zirconium"):
         return True
     if base in ("nickel", "cobalt"):
-        keep = ("ni", "fe") if base == "nickel" else ("co", "fe")
-        return sum(v for e, v in el.items() if e not in keep) > 10
+        return alloying_metals(("ni", "fe") if base == "nickel" else ("co", "fe")) > 10
     return False
 
 

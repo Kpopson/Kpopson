@@ -33,8 +33,10 @@ RESTRICTED_USE = {                                    # 225.7003-2(a)(1) and the
     "M240B 7.62 mm machine gun (crew-served weapon)": True,
     "Warehouse and facility use": False,
 }
+STEEL_CARBON = (Fraction("0.02"), Fraction(2))     # 252.225-7009(a) definition of steel
 STEEL_LIMITS = {"mn": Fraction("1.65"), "si": Fraction("0.60"), "cu": Fraction("0.60")}
 STEEL_ELEMENTS = ("al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v")
+NONMETALS = frozenset({"c", "si"})
 NOT_COTS_EXCEPTED = frozenset({"mill_product", "forging", "casting", "magnet", "fastener"})
 
 TRACKS = ("domestic_component_test", "domestic_iron_steel", "domestic_cots", "foreign")
@@ -88,15 +90,28 @@ class Instance:
     def _is_specialty(m):
         pct = {k[4:]: Fraction(v) for k, v in m.items() if k.startswith("max_") and v}
         base = m["base_metal"]
+
+        def other_metals(*skip):
+            return sum(v for e, v in pct.items() if e not in skip and e not in NONMETALS)
         if base == "iron":
-            return any(pct.get(e, 0) > lim for e, lim in STEEL_LIMITS.items()) or \
-                any(pct.get(e, 0) > Fraction("0.25") for e in STEEL_ELEMENTS)
+            steel = STEEL_CARBON[0] <= pct.get("c", 0) <= STEEL_CARBON[1]
+            if steel and (any(pct.get(e, 0) > lim for e, lim in STEEL_LIMITS.items())
+                          or any(pct.get(e, 0) > Fraction("0.25") for e in STEEL_ELEMENTS)):
+                return True
+            # iron-nickel alloy: iron (the balance) and nickel are the two predominant elements, together
+            # at least 50 percent (225.7003-1 definition of alloy)
+            rest = {e: v for e, v in pct.items() if e not in ("fe", "ni")}
+            ni = pct.get("ni", 0)
+            fe = 100 - sum(rest.values()) - ni
+            if min(fe, ni) > max(rest.values(), default=0) and fe + ni >= 50:
+                return other_metals("ni", "fe") > 10
+            return False
         if base in ("titanium", "zirconium"):
             return True
         if base == "nickel":
-            return sum(v for e, v in pct.items() if e not in ("ni", "fe")) > 10
+            return other_metals("ni", "fe") > 10
         if base == "cobalt":
-            return sum(v for e, v in pct.items() if e not in ("co", "fe")) > 10
+            return other_metals("co", "fe") > 10
         return False
 
     def restricted(self, pid):

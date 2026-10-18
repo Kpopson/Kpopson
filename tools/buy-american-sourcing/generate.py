@@ -6,6 +6,8 @@ usage: python3 generate.py [--seed N] [--out TASKDIR] [--quiet]
 weapon-system spare parts (specialty metals restricted), look-alike parts and facility supplies
 (not restricted). Look-alike parts were once tied to forklifts, ground support equipment and COTS
 vehicles; they now use the facility label so coverage never hinges on the automotive item definition.
+Mounts carry a glass-sealed sight window whose Fe-Ni-Co frame is below the steel carbon range but is
+still a specialty metal as an iron-nickel alloy.
 Planted products are re-drawn until one specific misreading of DFARS / FAR provably changes
 that product's answer (checked with bacore.Rules).
 """
@@ -96,6 +98,7 @@ MATERIALS = [
     ("MAT-TI64", "Ti-6Al-4V titanium alloy", "titanium", dict(al="6.75", v="4.50", fe="0.30")),
     ("MAT-SMCO", "Sintered samarium-cobalt (Sm2Co17) magnet alloy", "cobalt", dict(co="52.00", sm="25.50", fe="18.00", cu="6.00", zr="3.00")),
     ("MAT-C932", "C93200 bearing bronze", "copper", dict(cu="85.00", sn="8.00", pb="8.00", zn="4.00")),
+    ("MAT-FNC", "Fe-29Ni-17Co glass-sealing alloy, low carbon", "iron", dict(c="0.01", mn="0.50", si="0.20", ni="29.50", co="17.80")),
 ]
 ELEMENTS = ["c", "mn", "si", "cu", "al", "cr", "co", "mo", "ni", "nb", "ti", "w", "v", "fe", "mg", "sm", "zr", "sn", "pb", "zn"]
 
@@ -112,7 +115,7 @@ OCOLS = ["offer_id", "product_id", "slot", "supplier_id", "supply_type", "compon
          "inhouse_direct_cents", "inhouse_overhead_cents", "inhouse_profit_cents", "iron_steel_cost_cents",
          "cots_fastener", "fastener_mfr_dod_certified", "metal_material", "metal_g_per_piece", "metal_ore_origin",
          "metal_melt_country", "metal_rolling_country", "metal_coating_country"]
-STEEL_MATS = {"MAT-M19", "MAT-A36", "MAT-1018", "MAT-1541", "MAT-1340", "MAT-A572", "MAT-4140", "MAT-4340", "MAT-5160", "MAT-304"}
+STEEL_MATS = {"MAT-FNC", "MAT-M19", "MAT-A36", "MAT-1018", "MAT-1541", "MAT-1340", "MAT-A572", "MAT-4140", "MAT-4340", "MAT-5160", "MAT-304"}
 
 
 class Gen:
@@ -498,6 +501,10 @@ class Gen:
 
 
 # ---------------- product-level checks ----------------
+# The shipped instance was planted while the rules still read every iron alloy as steel. Planting keeps that
+# reading so the seed reproduces the shipped products; the answers (expected.json, budget) and calibrate.py
+# use the corrected rules, and every planted reading is re-checked there against the shipped instance.
+PLANT_FLAGS = ("sm_ignore_carbon",)
 QUAL = set()
 PARAMS = {}
 MATS = {m[0]: dict(material_id=m[0], name=m[1], base_metal=m[2], **{f"max_{e}": m[3].get(e, "0.00") for e in ELEMENTS})
@@ -522,7 +529,7 @@ def bkey(b):
 def view(part, flags=(), qual=None):
     qual = QUAL if qual is None else qual
     pid = part["prod"]["product_id"]
-    R = bacore.Rules(mini_inst(part), flags)
+    R = bacore.Rules(mini_inst(part), tuple(flags) + PLANT_FLAGS)
     blds = R.builds(pid)
     st, info = R.admissibility(pid, blds)
     al = [b for b in blds if bacore.allowed(st, b)]
@@ -648,7 +655,7 @@ def tw_sm_exact2(g, part):
     """Make a cheap build's noncompliant specialty metal exactly 2% of its total weight, by resizing a
     compliant specialty-metal part in that build."""
     v = view(part)
-    R = bacore.Rules(mini_inst(part))
+    R = bacore.Rules(mini_inst(part), PLANT_FLAGS)
     qty = {r["slot"]: int(r["qty_per_unit"]) for r in part["bom"]}
     for b in sorted((b for b in v["builds"] if b["build"] == "us" and b["sm_bad"]), key=lambda x: x["unit_outlay"]):
         T, B = b["sm_total"], b["sm_bad"]
@@ -834,10 +841,32 @@ def build(seed):
         for imp in part["imports"]:
             m += 1
             imp["offer_id"] = f"F{m:03d}"
+    add_sight_windows(seed, parts, n)
     used = {o["supplier_id"] for p in parts for o in p["offers"]} | {x["supplier_id"] for p in parts for x in p["imports"]}
     suppliers = [dict(supplier_id=sid, name=name, country=c, qualified="Y" if sid in QUAL else "N",
                       qualification_fee_cents=str(fees.get(sid, 0))) for sid, name, c in SUPPLIERS if sid in used]
     return g, dict(PARAMS), parts, suppliers
+
+
+def add_sight_windows(seed, parts, n):
+    """Glass-sealed sight window on every mount (iron-nickel alloy frame, below the steel carbon range).
+    Added after every earlier draw and numbered after the existing offers, so the rest of the instance
+    is exactly what earlier versions generated (own random stream)."""
+    g = Gen(seed * 1000 + 7)
+    for part in parts:
+        if not any(r["part_description"] == "Pintle pin" for r in part["bom"]):
+            continue
+        pid = part["prod"]["product_id"]
+        base, grams = g.r(700, 1100), g.r(60, 95)
+        part["bom"].append(dict(product_id=pid, slot="S7", part_description="Sight window, glass-sealed frame", qty_per_unit="1"))
+        offs = [g.offer(pid, "S7", sup, None, int(base * mult * g.u(0.97, 1.03)), "fabricated_part",
+                        duty_rate=0.0 if COUNTRY[sup] == "US" else None, mat="MAT-FNC", grams=grams, melt=melt,
+                        ore="AU" if melt != "US" else "US")
+                for sup, melt, mult in (("SUP-26", "US", 1.00), ("SUP-19", "DE", 0.84), ("SUP-10", "CN", 0.58))]
+        for o in offs:
+            n += 1
+            o["offer_id"] = f"C{n:04d}"
+        part["offers"].extend(offs)
 
 
 def write(task_dir, params, parts, suppliers):
@@ -899,7 +928,7 @@ def main():
         from collections import Counter
         print("min feasible spend", need, "budget", params["qualification_budget_cents"], "free", free["total_outlay"])
         print("optimum", sol["total_outlay"], "spend", sol["qualification_spend"], "new", sol["new_qualifications"])
-        print(Counter(sol["status"].values()), Counter(l["track"] for l in out["lines"]))
+        print(Counter(sol["status"].values()))
         print("restricted lines:", sum(1 for l in out["lines"] if l["specialty_metals_restricted"]))
 
 

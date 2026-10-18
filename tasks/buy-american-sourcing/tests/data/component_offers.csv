@@ -17,6 +17,9 @@ C0015,P01,S5,SUP-27,purchased,TW,,fastener,Y,189,11,6,N,,,,206,Y,Y,MAT-4140,115,
 C0016,P01,S6,SUP-30,purchased,US,,assembly,N,1616,74,0,N,,,,976,N,N,,,,,,
 C0017,P01,S6,SUP-30,purchased,US,,assembly,N,1338,64,0,N,,,,976,N,N,,,,,,
 C0018,P01,S6,SUP-53,purchased,CN,,assembly,Y,1074,22,42,N,,,,976,N,N,,,,,,
+C0668,P01,S7,SUP-26,purchased,US,,fabricated_part,N,805,17,0,N,,,,822,N,N,MAT-FNC,84,US,US,US,NONE
+C0669,P01,S7,SUP-19,purchased,DE,,fabricated_part,N,703,21,27,N,,,,751,N,N,MAT-FNC,84,AU,DE,DE,NONE
+C0670,P01,S7,SUP-10,purchased,CN,,fabricated_part,N,470,16,12,N,,,,498,N,N,MAT-FNC,84,AU,CN,CN,NONE
 C0019,P02,S1,SUP-21,purchased,US,,nonmetal,N,7440,324,0,N,,,,0,N,N,,,,,,
 C0020,P02,S1,SUP-28,purchased,DE,,nonmetal,N,4476,178,0,N,,,,0,N,N,,,,,,
 C0021,P02,S1,SUP-29,purchased,CA,,nonmetal,N,5131,180,200,N,,,,0,N,N,,,,,,
@@ -108,6 +111,9 @@ C0106,P08,S5,SUP-27,purchased,TW,,fastener,Y,312,13,11,N,,,,336,Y,Y,MAT-4140,121
 C0107,P08,S6,SUP-30,purchased,US,,assembly,N,1797,59,0,N,,,,923,N,N,,,,,,
 C0108,P08,S6,SUP-33,purchased,IT,,assembly,N,1447,51,56,N,,,,923,N,N,,,,,,
 C0109,P08,S6,SUP-53,purchased,CN,,assembly,Y,1153,30,0,N,,,,923,N,N,,,,,,
+C0671,P08,S7,SUP-26,purchased,US,,fabricated_part,N,894,45,0,N,,,,939,N,N,MAT-FNC,78,US,US,US,NONE
+C0672,P08,S7,SUP-19,purchased,DE,,fabricated_part,N,777,22,35,N,,,,834,N,N,MAT-FNC,78,AU,DE,DE,NONE
+C0673,P08,S7,SUP-10,purchased,CN,,fabricated_part,N,538,29,18,N,,,,585,N,N,MAT-FNC,78,AU,CN,CN,NONE
 C0110,P09,S1,SUP-01,purchased,US,,fabricated_part,N,5388,208,0,N,,,,0,N,N,MAT-6061,5779,US,US,US,NONE
 C0111,P09,S1,SUP-10,purchased,CN,,fabricated_part,N,3773,119,128,N,,,,0,N,N,MAT-6061,5779,AU,CN,CN,NONE
 C0112,P09,S1,SUP-40,purchased,KR,,fabricated_part,N,4655,212,247,N,,,,5114,N,N,MAT-304,5779,AU,KR,KR,NONE
@@ -406,6 +412,9 @@ C0404,P31,S5,SUP-27,purchased,TW,,fastener,Y,203,5,7,N,,,,215,Y,Y,MAT-4140,135,C
 C0405,P31,S6,SUP-30,purchased,US,,assembly,N,2284,57,0,N,,,,910,N,N,,,,,,
 C0406,P31,S6,SUP-30,purchased,US,,assembly,N,1797,40,0,N,,,,910,N,N,,,,,,
 C0407,P31,S6,SUP-53,purchased,CN,,assembly,Y,1407,73,48,N,,,,910,N,N,,,,,,
+C0674,P31,S7,SUP-26,purchased,US,,fabricated_part,N,1082,50,0,N,,,,1132,N,N,MAT-FNC,89,US,US,US,NONE
+C0675,P31,S7,SUP-19,purchased,DE,,fabricated_part,N,888,49,40,N,,,,977,N,N,MAT-FNC,89,AU,DE,DE,NONE
+C0676,P31,S7,SUP-10,purchased,CN,,fabricated_part,N,602,17,23,N,,,,642,N,N,MAT-FNC,89,AU,CN,CN,NONE
 C0408,P32,S1,SUP-30,purchased,US,,forging,N,3084,145,0,N,,,,3229,N,N,MAT-4140,1851,US,US,US,NONE
 C0409,P32,S1,SUP-31,purchased,KR,,forging,N,2236,110,76,N,,,,2422,N,N,MAT-4140,1851,AU,KR,KR,NONE
 C0410,P32,S1,SUP-32,purchased,IN,,forging,N,2143,67,73,N,,,,2283,N,N,MAT-4140,1851,AU,CN,IN,NONE
@@ -577,6 +586,9 @@ C0575,P44,S5,SUP-27,purchased,TW,,fastener,Y,197,11,7,N,,,,215,Y,Y,MAT-4140,103,
 C0576,P44,S6,SUP-30,purchased,US,,assembly,N,2217,91,0,N,,,,1008,N,N,,,,,,
 C0577,P44,S6,SUP-53,purchased,CN,,assembly,Y,1450,51,0,N,,,,1008,N,N,,,,,,
 C0578,P44,S6,SUP-33,purchased,IT,,assembly,N,1773,39,94,N,,,,1008,N,N,,,,,,
+C0677,P44,S7,SUP-26,purchased,US,,fabricated_part,N,729,37,0,N,,,,766,N,N,MAT-FNC,94,US,US,US,NONE
+C0678,P44,S7,SUP-19,purchased,DE,,fabricated_part,N,596,25,0,N,,,,621,N,N,MAT-FNC,94,AU,DE,DE,NONE
+C0679,P44,S7,SUP-10,purchased,CN,,fabricated_part,N,417,22,14,N,,,,453,N,N,MAT-FNC,94,AU,CN,CN,NONE
 C0579,P45,S1,SUP-13,purchased,US,,electronic,N,3327,182,0,N,,,,0,N,N,,,,,,
 C0580,P45,S1,SUP-14,purchased,TW,,electronic,N,2476,144,62,N,,,,0,N,N,,,,,,
 C0581,P45,S1,SUP-15,purchased,UNKNOWN,,electronic,N,2446,56,0,N,,,,0,N,N,,,,,,
@@ -639,6 +651,9 @@ C0637,P48,S5,SUP-27,purchased,TW,,fastener,Y,218,9,7,N,,,,234,Y,Y,MAT-4140,112,C
 C0638,P48,S6,SUP-30,purchased,US,,assembly,N,1802,62,0,N,,,,936,N,N,,,,,,
 C0639,P48,S6,SUP-33,purchased,IT,,assembly,N,1451,69,65,N,,,,936,N,N,,,,,,
 C0640,P48,S6,SUP-30,purchased,US,,assembly,N,1494,78,0,N,,,,936,N,N,,,,,,
+C0680,P48,S7,SUP-26,purchased,US,,fabricated_part,N,705,36,0,N,,,,741,N,N,MAT-FNC,64,US,US,US,NONE
+C0681,P48,S7,SUP-19,purchased,DE,,fabricated_part,N,610,20,27,N,,,,657,N,N,MAT-FNC,64,AU,DE,DE,NONE
+C0682,P48,S7,SUP-10,purchased,CN,,fabricated_part,N,420,19,10,N,,,,449,N,N,MAT-FNC,64,AU,CN,CN,NONE
 C0641,P49,S1,SUP-01,purchased,US,,fabricated_part,N,5922,354,0,N,,,,0,N,N,MAT-6061,5850,US,US,US,NONE
 C0642,P49,S1,SUP-40,purchased,KR,,fabricated_part,N,4977,218,194,N,,,,5389,N,N,MAT-304,5850,AU,KR,KR,NONE
 C0643,P49,S1,SUP-39,purchased,US,,fabricated_part,N,6631,336,0,N,,,,6967,N,N,MAT-304,5850,US,US,US,NONE
